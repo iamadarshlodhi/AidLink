@@ -52,6 +52,7 @@ export const passwordValidation = z
 
 export const verificationCodeValidation = z
   .string()
+  .trim()
   .length(6, "Verification code must be 6 characters")
   .regex(/^\d+$/, "Verification code must be numeric");
 

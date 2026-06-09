@@ -7,4 +7,8 @@ export const signupSchema = z.object({
     verificationCode: verificationCodeValidation, 
     password: passwordValidation, 
     confirmPassword: passwordValidation,
+})
+.refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
 });
