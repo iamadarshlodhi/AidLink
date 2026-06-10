@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { emailValidation, nameValidation, passwordValidation, phoneValidation, verificationCodeValidation } from "./validationSchema";
+import { emailValidation, nameValidation, passwordValidation, phoneValidation, usernameValidation, verificationCodeValidation } from "./validationSchema";
 export const signupSchema = z.object({ 
-    name: nameValidation, 
+    name: nameValidation,
+    username: usernameValidation.trim().min(2).max(100),
     email: emailValidation, 
     phone: phoneValidation, 
     verificationCode: verificationCodeValidation, 

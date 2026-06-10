@@ -1,6 +1,11 @@
 import { z } from "zod";
-import { emailValidation } from "./validationSchema";
-import { emailValidation } from "./validationSchema";
-export const sendOtpSchema = z.object({
-  email: emailValidation,
-});
+import {
+  emailValidation,
+  usernameValidation,
+} from "./validationSchema";
+
+export const sendOtpSchema =
+  z.object({
+    username: usernameValidation,
+    email: emailValidation,
+  });
