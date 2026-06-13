@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { signupSchema } from "@/schemas/signUpSchema";
+import { Eye, EyeOff } from "lucide-react";
 
 import {
   Form,
@@ -39,6 +40,12 @@ export default function SignUpPage() {
     const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
     const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+
+    const [showPassword, setShowPassword] =
+      useState(false);
+
+    const [ showConfirmPassword, setShowConfirmPassword] = 
+      useState(false);
 
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
@@ -410,11 +417,35 @@ export default function SignUpPage() {
                   </FormLabel>
 
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Enter password"
-                      {...field}
-                    />
+                      
+                    <div className="relative">
+                      <Input
+                        type={
+                          showPassword
+                            ? "text"
+                            : "password"
+                        }
+                        placeholder="Enter password"
+                        {...field}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowPassword(
+                            !showPassword
+                          )
+                        }
+                        className="absolute right-3 top-1/2 -translate-y-1/2"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+
                   </FormControl>
 
                   <FormMessage />
@@ -432,11 +463,35 @@ export default function SignUpPage() {
                   </FormLabel>
 
                   <FormControl>
-                    <Input
-                      type="password"
-                      placeholder="Confirm password"
-                      {...field}
-                    />
+
+                    <div className="relative">
+                      <Input
+                        type={
+                          showConfirmPassword
+                            ? "text"
+                            : "password"
+                        }
+                        placeholder="Confirm password"
+                        {...field}
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(
+                            !showConfirmPassword
+                          )
+                        }
+                        className="absolute right-3 top-1/2 -translate-y-1/2"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </button>
+                    </div>
+                    
                   </FormControl>
 
                   <FormMessage />
