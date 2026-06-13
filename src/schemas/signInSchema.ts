@@ -1,10 +1,19 @@
 import { z } from "zod";
-import { emailValidation } from "./validationSchema";
 
-export const signinSchema = z.object({
-    email: emailValidation, 
+export const signInSchema =
+  z.object({
+    identifier: z
+      .string()
+      .trim()
+      .min(
+        1,
+        "Email or username is required"
+      ),
+
     password: z
-        .string()
-        .min(1, "Password is required")
-        .max(32, "Password cannot exceed 32 characters"),
-});
+      .string()
+      .min(
+        8,
+        "Password must be at least 8 characters"
+      ),
+  });

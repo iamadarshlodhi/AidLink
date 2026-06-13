@@ -27,16 +27,35 @@ export const {
           label: "Password",
           type: "password",
         },
+
+        Username: {
+          label: "Username",
+          type: "text",
+        },
+
+        Password: {
+          label: "Password",
+          type: "password",
+        },
       },
 
       async authorize(credentials) {
         await dbConnect();
 
+        // Support both field name formats
         const identifier =
-          credentials?.identifier as string;
+          (credentials?.identifier ||
+            credentials?.Username) as string;
 
         const password =
-          credentials?.password as string;
+          (credentials?.password ||
+            credentials?.Password) as string;
+
+        if (!identifier || !password) {
+          throw new Error(
+            "Invalid credentials"
+          );
+        }
 
         const user =
           await UserModel.findOne({

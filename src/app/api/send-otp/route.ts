@@ -96,13 +96,15 @@ export async function POST(request: Request) {
         status: 200,
       }
     );
-  } catch (error) {
-    console.error(error);
+  } 
+  catch (error) {
+    console.error("SEND OTP ERROR:", error);
 
     return Response.json(
       {
         success: false,
-        message: "Failed to send verification code",
+        message: "Failed to send OTP",
+        error: String(error),
       },
       {
         status: 500,
