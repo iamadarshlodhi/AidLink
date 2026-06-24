@@ -12,7 +12,8 @@ export async function POST(request: Request) {
             email,
             phone, 
             password, 
-            verificationCode 
+            verificationCode,
+            role = "user",
         } = await request.json();
 
         // 1. Check username exists
@@ -94,6 +95,7 @@ export async function POST(request: Request) {
                 email,
                 phone,
                 password: hashedPassword,
+                role,   
                 verificationStatus: "verified",
             }); 
 

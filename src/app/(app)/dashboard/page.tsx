@@ -6,6 +6,8 @@ import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import Image from "next/image";
+import logoAD from "./logo.png";
 
 export default function DashboardPage() {
   const { data: session, status } = useSession();
@@ -32,9 +34,16 @@ export default function DashboardPage() {
       <div className="max-w-4xl mx-auto">
 
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">
-            Dashboard
-          </h1>
+            <Image
+              src={logoAD}
+              alt="Logo"
+              width={60}
+              height={60}
+            />
+
+            <h1 className="text-3xl font-bold">
+              Dashboard
+            </h1>
 
           <div className="flex gap-4 items-center">
             <ThemeToggle />

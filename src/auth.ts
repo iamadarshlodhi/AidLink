@@ -103,8 +103,7 @@ export const {
           email: user.email,
           username: user.username,
           role: user.role,
-          trustScore:
-            user.trustScore,
+          trustScore: user.trustScore,
         };
       },
     }),
@@ -117,11 +116,9 @@ export const {
     }) {
       if (user) {
         token.id = user.id;
-        token.username =
-          user.username;
+        token.username = user.username;
         token.role = user.role;
-        token.trustScore =
-          user.trustScore;
+        token.trustScore = user.trustScore;
       }
 
       return token;
@@ -132,17 +129,13 @@ export const {
       token,
     }) {
       if (session.user) {
-        session.user.id =
-          token.id as string;
+        session.user.id = token.id as string;
 
-        session.user.username =
-          token.username as string;
+        session.user.username = token.username as string;
 
-        session.user.role =
-          token.role as string;
+        session.user.role = token.role as string;
 
-        session.user.trustScore =
-          token.trustScore as number;
+        session.user.trustScore = token.trustScore as number;
       }
 
       return session;
