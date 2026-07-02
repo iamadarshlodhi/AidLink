@@ -64,8 +64,26 @@ export const skillValidation = z
   .string()
   .trim()
   .min(2, "Skill must be at least 2 characters")
-  .max(30, "Skill cannot exceed 30 characters");
+  .max(100, "Skill cannot exceed 100 characters");
 
+export const locationValidation = z
+  .object({
+    state: z
+      .string()
+      .trim()
+      .min(2, "State must be at least 2 characters")
+      .max(100, "State cannot exceed 100 characters"),
+    city: z
+      .string()
+      .trim()
+      .min(2, "City must be at least 2 characters")
+      .max(100, "City cannot exceed 100 characters"),
+    area: z
+      .string()
+      .trim()
+      .min(2, "Area must be at least 2 characters")
+      .max(100, "Area cannot exceed 100 characters"),
+  })
 
 /* ==========================================
                 TASK VALIDATIONS

@@ -15,6 +15,7 @@ export async function POST(request: Request) {
 
     const existingUser = await UserModel.findOne({
       email,
+      isDeleted: { $ne: true },
     });
 
     if (existingUser) {

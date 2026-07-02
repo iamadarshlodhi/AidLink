@@ -16,8 +16,8 @@ export async function POST(request: Request) {
     const existingUser =
       await UserModel.findOne({
         $or: [
-          { email },
-          { username },
+          { email, isDeleted: { $ne: true } },
+          { username, isDeleted: { $ne: true } },
         ],
       });
 

@@ -20,7 +20,7 @@ export interface IUser extends Document {
   phone: string;
   password: string;
 
-  profileImage?: string;
+  profilePicture?: string;
   bio?: string;
 
   skills: string[];
@@ -32,6 +32,10 @@ export interface IUser extends Document {
   totalReviews: number;
 
   phoneVerified: boolean;
+
+  dateofBirth?: Date;
+  gender?: "male" | "female" | "other";
+  notificationsEnabled?: boolean;
 
   verificationStatus:
     | "unverified"
@@ -50,6 +54,8 @@ export interface IUser extends Document {
 
   blockedUsers: mongoose.Types.ObjectId[];
 
+  isDeleted: boolean;
+  deletedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -92,7 +98,7 @@ const UserSchema = new Schema<IUser>(
       regex: [/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, "Password must contain at least one letter and one number"],
     },
 
-    profileImage: {
+    profilePicture: {
       type: String,
       default: "",
     },
@@ -103,12 +109,15 @@ const UserSchema = new Schema<IUser>(
       maxlength: 500,
     },
 
-    skills: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
+    skills: {
+      type: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
+      default: [],
+    },
 
     location: {
       state: {
@@ -149,6 +158,22 @@ const UserSchema = new Schema<IUser>(
     phoneVerified: {
       type: Boolean,
       default: false,
+    },
+
+    dateofBirth: {
+      type: Date,
+      default: null,
+    },
+
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+      default: "other",
+    },
+
+    notificationsEnabled: {
+      type: Boolean,
+      default: true,
     },
 
     verificationStatus: {
@@ -209,6 +234,15 @@ const UserSchema = new Schema<IUser>(
         ref: "User",
       },
     ],
+
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,

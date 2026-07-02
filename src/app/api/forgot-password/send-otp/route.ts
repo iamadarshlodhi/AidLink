@@ -18,6 +18,7 @@ export async function POST(
     const user =
       await UserModel.findOne({
         email,
+        isDeleted: { $ne: true },
       });
 
     if (!user) {
