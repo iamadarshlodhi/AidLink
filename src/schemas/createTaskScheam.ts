@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { taskDescriptionValidation, taskTitleValidation, paymentValidation, helpersRequiredValidation } from "./validationSchema";
-import { coerce } from "zod";
 export const createTaskSchema = z.object({ 
     title: taskTitleValidation, 
     description: taskDescriptionValidation, 
@@ -9,7 +8,11 @@ export const createTaskSchema = z.object({
     taskType: z.enum([ "paid", "volunteer", ]), 
     tentativePayment: paymentValidation.optional(), 
     helpersRequired: helpersRequiredValidation, 
-    deadline: z.coerce.date(), 
-    images: z .array(z.string().url()) .max(5), 
-    location: z.string().optional(),
+    deadline: z.date(),
+    images: z .array(z.string().url()).max(5).optional(), 
+    location: z.object({
+        city: z.string(),
+        state: z.string(),
+        country: z.string(),
+    }).optional(),
 });

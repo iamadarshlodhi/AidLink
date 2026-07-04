@@ -2,18 +2,19 @@ import mongoose, {
   Schema,
   Document,
   Types,
+  Model,
 } from "mongoose";
 
 export type HelpRequestStatus =
-  | "pending"
-  | "accepted"
+  | "open"
   | "in-progress"
   | "completed"
   | "cancelled";
 
-export interface HelpRequest
+export interface IHelpRequest
   extends Document {
   title: string;
+
   description: string;
 
   category:
@@ -30,17 +31,29 @@ export interface HelpRequest
     | "high"
     | "critical";
 
-  status: HelpRequestStatus;
+  mode:
+    | "online"
+    | "offline";
 
-  location: string;
+  taskType:
+    | "paid"
+    | "volunteer";
+
+  status: HelpRequestStatus;
 
   requester: Types.ObjectId;
 
-  assignedTo?: Types.ObjectId;
+  acceptedHelpers: Types.ObjectId[];
 
-  contactPhone?: string;
+  helpersRequired: number;
 
-  images?: string[];
+  tentativePayment?: number;
+
+  deadline: Date;
+
+  location?: string;
+
+  images: string[];
 
   adminNotes?: string;
 
@@ -51,7 +64,7 @@ export interface HelpRequest
 }
 
 const HelpRequestSchema =
-  new Schema<HelpRequest>(
+  new Schema<IHelpRequest>(
     {
       title: {
         type: String,
@@ -62,6 +75,7 @@ const HelpRequestSchema =
       description: {
         type: String,
         required: true,
+        trim: true,
       },
 
       category: {
@@ -88,21 +102,33 @@ const HelpRequestSchema =
         default: "medium",
       },
 
+      mode: {
+        type: String,
+        enum: [
+          "online",
+          "offline",
+        ],
+        required: true,
+      },
+
+      taskType: {
+        type: String,
+        enum: [
+          "paid",
+          "volunteer",
+        ],
+        required: true,
+      },
+
       status: {
         type: String,
         enum: [
-          "pending",
-          "accepted",
+          "open",
           "in-progress",
           "completed",
           "cancelled",
         ],
-        default: "pending",
-      },
-
-      location: {
-        type: String,
-        required: true,
+        default: "open",
       },
 
       requester: {
@@ -111,23 +137,51 @@ const HelpRequestSchema =
         required: true,
       },
 
-      assignedTo: {
-        type: Schema.Types.ObjectId,
-        ref: "User",
+      acceptedHelpers: {
+        type: [
+          {
+            type: Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
+        default: [],
       },
 
-      contactPhone: {
+      helpersRequired: {
+        type: Number,
+        required: true,
+        min: 1,
+        default: 1,
+      },
+
+      tentativePayment: {
+        type: Number,
+        min: 0,
+      },
+
+      deadline: {
+        type: Date,
+        required: true,
+      },
+
+      location: {
         type: String,
+        default: "",
       },
 
-      images: [
-        {
-          type: String,
-        },
-      ],
+      images: {
+        type: [
+          {
+            type: String,
+            trim: true,
+          },
+        ],
+        default: [],
+      },
 
       adminNotes: {
         type: String,
+        default: "",
       },
 
       completedAt: {
@@ -139,10 +193,30 @@ const HelpRequestSchema =
     }
   );
 
+HelpRequestSchema.index({
+  requester: 1,
+});
+
+HelpRequestSchema.index({
+  status: 1,
+});
+
+HelpRequestSchema.index({
+  category: 1,
+});
+
+HelpRequestSchema.index({
+  urgency: 1,
+});
+
+HelpRequestSchema.index({
+  deadline: 1,
+});
+
 const HelpRequestModel =
   (mongoose.models
-    .HelpRequest as mongoose.Model<HelpRequest>) ||
-  mongoose.model<HelpRequest>(
+    .HelpRequest as Model<IHelpRequest>) ||
+  mongoose.model<IHelpRequest>(
     "HelpRequest",
     HelpRequestSchema
   );

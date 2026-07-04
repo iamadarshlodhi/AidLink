@@ -158,10 +158,10 @@ export async function PATCH(
       );
     }
 
-    // Only pending requests can be edited
+    // Only open requests can be edited
 
     if (
-      helpRequest.status !== "pending"
+      helpRequest.status !== "open"
     ) {
       return Response.json(
         {
