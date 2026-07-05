@@ -122,6 +122,7 @@ export const interestNoteValidation = z
 
 export const ratingValidation = z
   .number()
+  .int("Rating must be an integer")
   .min(1, "Rating must be at least 1")
   .max(5, "Rating cannot exceed 5");
 
