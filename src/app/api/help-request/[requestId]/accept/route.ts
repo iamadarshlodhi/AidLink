@@ -89,6 +89,27 @@ export async function PATCH(
             );
         }
 
+        // check if helper is accepted elsewhere in another help request that is in progress
+        const existingAcceptedApplication = await RequestApplication.findOne({
+            helper: application.helper,
+            status: "accepted",
+            requestId: { $ne: requestId },
+        }).populate<{
+            requestId: { status: string; }
+        }>("requestId", "status");
+
+        if (existingAcceptedApplication && existingAcceptedApplication.requestId.status === "in-progress") {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "The helper is already accepted for another help request.",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+
         //check if limit of requests is reached
         if (
             helpRequest.acceptedHelpers.length >=
