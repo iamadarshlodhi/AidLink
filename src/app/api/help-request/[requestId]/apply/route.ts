@@ -4,6 +4,7 @@ import RequestApplication from "@/model/RequestApplication";
 import { NextResponse } from "next/server";
 import { applyTaskSchema } from "@/schemas/applyTaskSchema";
 import { auth } from "@/auth";
+import { createNotification } from "@/lib/createNotification";
 
 export async function POST(request: Request, { params }: { params: Promise<{ requestId: string }> }) {
     try {
@@ -105,6 +106,16 @@ export async function POST(request: Request, { params }: { params: Promise<{ req
             message: interestNote,
         });
         await requestApplication.save();
+
+        await createNotification({
+            recipient: helpRequest.requester.toString(),
+            sender: session.user.id,
+            type: "application",
+            title: "New Application",
+            message: `${session.user.name} applied to your help request.`,
+            request: helpRequest._id.toString(),
+        });
+
         return NextResponse.json(
             {
                 success: true,

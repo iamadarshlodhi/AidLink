@@ -38,12 +38,12 @@ export async function GET(
       )
         .populate(
           "requester",
-          "name username email phone"
+          "name username profileImage averageRating trustScore verificationStatus"
         )
         .populate(
-          "assignedTo",
-          "name username email phone"
-        );
+          "acceptedHelpers",
+          "name username profileImage averageRating trustScore verificationStatus"
+        )
 
     if (!helpRequest) {
       return Response.json(
@@ -121,7 +121,15 @@ export async function PATCH(
     const helpRequest =
       await HelpRequestModel.findById(
         requestId
-      );
+      )
+        .populate(
+          "requester",
+          "name username profileImage averageRating trustScore verificationStatus"
+        )
+        .populate(
+          "acceptedHelpers",
+          "name username profileImage averageRating trustScore verificationStatus"
+        );
 
     if (!helpRequest) {
       return Response.json(
@@ -275,7 +283,15 @@ export async function DELETE(
     const helpRequest =
       await HelpRequestModel.findById(
         requestId
-      );
+      )
+        .populate(
+          "requester",
+          "name username profileImage averageRating trustScore verificationStatus"
+        )
+        .populate(
+          "acceptedHelpers",
+          "name username profileImage averageRating trustScore verificationStatus"
+        );
 
     if (!helpRequest) {
       return Response.json(

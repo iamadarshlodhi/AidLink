@@ -6,6 +6,7 @@ import HelpRequest from "@/model/HelpRequest";
 import RequestApplicationModel from "@/model/RequestApplication";
 import ReviewModel from "@/model/Review";
 import UserModel from "@/model/User";
+import { createNotification } from "@/lib/createNotification";
 
 
 export async function POST(
@@ -177,6 +178,15 @@ export async function POST(
                 totalReviews,
             }
         );
+
+        await createNotification({
+            recipient: review.reviewee.toString(),
+            sender: session.user.id,
+            type: "review",
+            title: "New Review",
+            message: `${session.user.name} has left you a review for the task "${helpRequest.title}".`,
+            request: helpRequest._id.toString(),
+        });
 
         return NextResponse.json(
             {

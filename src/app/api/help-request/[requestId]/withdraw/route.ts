@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { createNotification } from "@/lib/createNotification";
 import dbConnect from "@/lib/dbConnect";
 import HelpRequest from "@/model/HelpRequest";
 import RequestApplication from "@/model/RequestApplication";
@@ -139,6 +140,15 @@ export async function PATCH(
     }
 
     await application.save();
+
+    await createNotification({
+        recipient: helpRequest.requester.toString(),
+        sender: session.user.id,
+        type: "withdrawn",
+        title: "Application Withdrawn",
+        message: `${session.user.name} has withdrawn their application for "${helpRequest.title}".`,
+        request: helpRequest._id.toString(),
+    });
 
     return NextResponse.json(
       {

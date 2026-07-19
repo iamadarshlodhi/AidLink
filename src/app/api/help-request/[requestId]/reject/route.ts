@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { createNotification } from "@/lib/createNotification";
 import dbConnect from "@/lib/dbConnect";
 import HelpRequest from "@/model/HelpRequest";
 import RequestApplication from "@/model/RequestApplication";
@@ -113,6 +114,15 @@ export async function PATCH(
     application.rejectedAt = new Date();
 
     await application.save();
+
+    await createNotification({
+      recipient: application.helper.toString(),
+      sender: session.user.id,
+      type: "rejected",
+      title: "Application Rejected",
+      message: "Your application has been rejected.",
+      request: helpRequest._id.toString(),
+    });
 
     return NextResponse.json(
       {

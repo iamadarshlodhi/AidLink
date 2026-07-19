@@ -213,6 +213,32 @@ HelpRequestSchema.index({
   deadline: 1,
 });
 
+// Search
+HelpRequestSchema.index({
+  title: "text",
+  description: "text",
+});
+
+// Frequently used filters
+HelpRequestSchema.index({
+  mode: 1,
+});
+
+HelpRequestSchema.index({
+  taskType: 1,
+});
+
+// Compound indexes
+HelpRequestSchema.index({
+  status: 1,
+  category: 1,
+});
+
+HelpRequestSchema.index({
+  status: 1,
+  deadline: 1,
+});
+
 const HelpRequestModel =
   (mongoose.models
     .HelpRequest as Model<IHelpRequest>) ||

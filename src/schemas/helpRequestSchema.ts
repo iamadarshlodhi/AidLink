@@ -1,54 +1,107 @@
 import { z } from "zod";
 
-export const helpRequestSchema = z.object({
-  title: z
-    .string()
-    .trim()
-    .min(5, "Title must be at least 5 characters")
-    .max(100, "Title cannot exceed 100 characters"),
+export const helpRequestSchema = z
+  .object({
+    title: z
+      .string()
+      .trim()
+      .min(5)
+      .max(100),
 
-  description: z
-    .string()
-    .trim()
-    .min(20, "Description must be at least 20 characters")
-    .max(1000, "Description cannot exceed 1000 characters"),
+    description: z
+      .string()
+      .trim()
+      .min(20)
+      .max(1000),
 
-  category: z.enum(
-    [
+    category: z.enum([
       "medical",
       "food",
       "education",
       "transport",
       "shelter",
       "other",
-    ]
-  ),
+    ]),
 
-  urgency: z.enum(
-    [
+    urgency: z.enum([
       "low",
       "medium",
       "high",
       "critical",
-    ]
-  ),
+    ]),
 
-  location: z
-    .string()
-    .trim()
-    .min(2, "Location is required")
-    .max(150, "Location is too long"),
+    mode: z.enum([
+      "online",
+      "offline",
+    ]),
 
-  contactPhone: z
-    .string()
-    .regex(
-      /^[6-9]\d{9}$/,
-      "Enter a valid phone number"
-    )
-    .optional(),
+    taskType: z.enum([
+      "paid",
+      "volunteer",
+    ]),
 
-  images: z
-    .array(z.string().url("Invalid image URL"))
-    .max(5, "Maximum 5 images allowed")
-    .optional(),
-});
+    helpersRequired:
+      z.coerce.number().int().min(1).max(20),
+
+    tentativePayment:
+      z.coerce
+        .number()
+        .min(0)
+        .optional(),
+
+    deadline:
+      z.coerce.date(),
+
+    location: z
+      .string()
+      .trim()
+      .optional(),
+
+    images: z
+      .array(z.string().url())
+      .max(5)
+      .default([]),
+  })
+  .superRefine(
+    (data, ctx) => {
+      if (
+        data.mode === "offline" &&
+        (!data.location ||
+          data.location.trim() === "")
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["location"],
+          message:
+            "Location is required for offline requests.",
+        });
+      }
+
+      if (
+        data.taskType === "paid" &&
+        (data.tentativePayment ===
+          undefined ||
+          data.tentativePayment <= 0)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [
+            "tentativePayment",
+          ],
+          message:
+            "Payment is required for paid tasks.",
+        });
+      }
+
+      if (
+        data.deadline <= new Date()
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["deadline"],
+          message:
+            "Deadline must be in the future.",
+        });
+      }
+    }
+  );

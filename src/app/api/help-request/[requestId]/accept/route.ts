@@ -4,6 +4,7 @@ import RequestApplication from "@/model/RequestApplication";
 import { NextResponse } from "next/server";
 import { acceptApplicationSchema } from "@/schemas/acceptApplicationSchema";
 import { auth } from "@/auth";
+import { createNotification } from "@/lib/createNotification";
 
 export async function PATCH(
     request: Request, 
@@ -164,6 +165,15 @@ export async function PATCH(
         }
 
         await helpRequest.save();
+
+        await createNotification({
+            recipient: application.helper.toString(),
+            sender: session.user.id,
+            type: "accepted",
+            title: "Application Accepted",
+            message: `Your application for "${helpRequest.title}" has been accepted.`,
+            request: helpRequest._id.toString(),
+        });
         
         return NextResponse.json(
             {

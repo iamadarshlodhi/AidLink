@@ -1,11 +1,12 @@
 import { auth } from "@/auth";
+import { createNotification } from "@/lib/createNotification";
 import dbConnect from "@/lib/dbConnect";
 import HelpRequest from "@/model/HelpRequest";
 import RequestApplication from "@/model/RequestApplication";
 import { NextResponse } from "next/server";
 
 export async function PATCH(
-  request: Request,
+  _request: Request,
   {
     params,
   }: {
@@ -102,20 +103,20 @@ export async function PATCH(
     application.helper.toString() ===
     session.user.id
     ) {
-    if (application.helperConfirmed) {
-        return NextResponse.json(
-        {
-            success: false,
-            message:
-            "You have already confirmed completion.",
-        },
-        {
-            status: 400,
-        }
-        );
-    }
+      if (application.helperConfirmed) {
+          return NextResponse.json(
+          {
+              success: false,
+              message:
+              "You have already confirmed completion.",
+          },
+          {
+              status: 400,
+          }
+          );
+      }
 
-    application.helperConfirmed = true;
+      application.helperConfirmed = true;
     }
 
     // Requester confirms completion
@@ -155,11 +156,11 @@ export async function PATCH(
 
     // Both confirmed
     if (
-    application.helperConfirmed &&
-    application.requesterConfirmed
+      application.helperConfirmed &&
+      application.requesterConfirmed
     ) {
-    application.status = "completed";
-    application.completedAt = new Date();
+      application.status = "completed";
+      application.completedAt = new Date();
     }
 
     await application.save();
@@ -179,6 +180,28 @@ export async function PATCH(
         await helpRequest.save();
     }
 
+    if (application.status === "completed") {
+      await Promise.all([
+        createNotification({
+          recipient: helpRequest.requester.toString(),
+          sender: session.user.id,
+          type: "completed",
+          title: "Task Completed",
+          message: `"${helpRequest.title}" has been completed successfully.`,
+          request: helpRequest._id.toString(),
+        }),
+
+        createNotification({
+          recipient: application.helper.toString(),
+          sender: session.user.id,
+          type: "completed",
+          title: "Task Completed",
+          message: `"${helpRequest.title}" has been completed successfully.`,
+          request: helpRequest._id.toString(),
+        }),
+      ]);
+    }
+
     return NextResponse.json(
     {
         success: true,
@@ -192,7 +215,7 @@ export async function PATCH(
         status: 200,
     }
     );
-    } catch (error) {
+  } catch (error) {
         console.error(
             "Complete Task:",
             error
