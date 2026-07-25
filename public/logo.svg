@@ -1,0 +1,54 @@
+<svg viewBox="0 0 545 545" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="circleClip">
+      <circle cx="272.5" cy="272.5" r="272.5"/>
+    </clipPath>
+  </defs>
+
+  <!-- Base circle -->
+  <circle cx="272.5" cy="272.5" r="272.5" fill="#1e88f5"/>
+
+  <!-- Diagonal shadow overlay, clipped to circle -->
+  <g clip-path="url(#circleClip)">
+    <polygon points="255,60 545,470 545,545 330,545 60,150" fill="#0d6fe0" opacity="0.55"/>
+  </g>
+
+  <!-- Bandage shadow (soft offset) -->
+  <g transform="translate(6,8)">
+    <rect x="205" y="75" width="135" height="395" rx="67.5" fill="#0a4fb0" opacity="0.25"/>
+  </g>
+
+  <!-- Bandage body -->
+  <rect x="205" y="75" width="135" height="395" rx="67.5" fill="#f5f8fb"/>
+
+  <!-- Center blue pad -->
+  <rect x="228" y="207" width="89" height="131" rx="10" fill="#1e88f5"/>
+
+  <!-- Dots - top cluster -->
+  <g fill="#1e6fd9">
+    <circle cx="240" cy="120" r="9"/>
+    <circle cx="272" cy="113" r="9"/>
+    <circle cx="304" cy="120" r="9"/>
+    <circle cx="230" cy="148" r="9"/>
+    <circle cx="262" cy="145" r="9"/>
+    <circle cx="294" cy="145" r="9"/>
+    <circle cx="315" cy="150" r="9"/>
+    <circle cx="246" cy="175" r="9"/>
+    <circle cx="278" cy="175" r="9"/>
+    <circle cx="308" cy="178" r="9"/>
+  </g>
+
+  <!-- Dots - bottom cluster -->
+  <g fill="#1e6fd9">
+    <circle cx="240" cy="425" r="9"/>
+    <circle cx="272" cy="432" r="9"/>
+    <circle cx="304" cy="425" r="9"/>
+    <circle cx="230" cy="397" r="9"/>
+    <circle cx="262" cy="400" r="9"/>
+    <circle cx="294" cy="400" r="9"/>
+    <circle cx="315" cy="395" r="9"/>
+    <circle cx="246" cy="370" r="9"/>
+    <circle cx="278" cy="370" r="9"/>
+    <circle cx="308" cy="367" r="9"/>
+  </g>
+</svg>

@@ -16,6 +16,7 @@ declare module "next-auth" {
     username: string;
     role: string;
     trustScore: number;
+    profilePicture?: string;
   }
 }
 
@@ -25,5 +26,6 @@ declare module "@auth/core/jwt" {
     username: string;
     role: string;
     trustScore: number;
+    profilePicture?: string;
   }
 }

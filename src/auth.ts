@@ -119,6 +119,7 @@ export const {
         token.username = user.username;
         token.role = user.role;
         token.trustScore = user.trustScore;
+        token.profilePicture = user.profilePicture;
       }
 
       return token;
@@ -136,6 +137,8 @@ export const {
         session.user.role = token.role as string;
 
         session.user.trustScore = token.trustScore as number;
+        session.user.profilePicture =
+          token.profilePicture as string;
       }
 
       return session;
