@@ -239,6 +239,11 @@ HelpRequestSchema.index({
   deadline: 1,
 });
 
+HelpRequestSchema.index({
+  requester: 1,
+  status: 1,
+});
+
 const HelpRequestModel =
   (mongoose.models
     .HelpRequest as Model<IHelpRequest>) ||

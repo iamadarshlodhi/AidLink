@@ -4,6 +4,7 @@ import "./globals.css";
 import AuthProvider from "@/context/AuthProvider";
 import { ThemeProvider } from "@/context/ThemeProvider";
 import { cn } from "@/lib/utils";
+import QueryProvider from "@/providers/QueryProvider";
 
 const notoSerif = Noto_Serif({subsets:['latin'],variable:'--font-serif'});
 
@@ -35,7 +36,9 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
           <AuthProvider>
-            {children}
+            <QueryProvider>
+              {children}
+            </QueryProvider>
           </AuthProvider>
         </ThemeProvider>
       </body>
