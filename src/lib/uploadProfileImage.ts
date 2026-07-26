@@ -1,18 +1,15 @@
+import { UploadApiResponse } from "cloudinary";
 import cloudinary from "@/lib/cloudinary";
 
 export async function uploadProfileImage(
   filePath: string,
   userId: string
-) {
-  const result = await cloudinary.uploader.upload(filePath, {
+): Promise<UploadApiResponse> {
+  return cloudinary.uploader.upload(filePath, {
     folder: "aidlink/users/profile",
-
     public_id: userId,
-
     overwrite: true,
-
     resource_type: "image",
-
     transformation: [
       {
         width: 400,
@@ -28,6 +25,4 @@ export async function uploadProfileImage(
       },
     ],
   });
-
-  return result.secure_url;
 }
