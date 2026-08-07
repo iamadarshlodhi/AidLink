@@ -24,7 +24,7 @@ export default function QuickActions() {
         </p>
 
         <Button asChild className="mt-6">
-          <Link href="/requests/create">
+          <Link href="/help-request/create">
             Create Request
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

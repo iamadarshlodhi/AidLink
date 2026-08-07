@@ -126,7 +126,7 @@ export default function HelpRequestForm() {
   }
 
   return (
-    <Card className="mx-auto max-w-3xl">
+    <Card className="mx-auto w-full max-w-5xl">
       <CardHeader>
         <CardTitle>Create Help Request</CardTitle>
       </CardHeader>

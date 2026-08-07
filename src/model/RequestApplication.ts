@@ -93,6 +93,19 @@ RequestApplicationSchema.index(
   }
 );
 
+RequestApplicationSchema.index({
+  helper: 1,
+});
+
+RequestApplicationSchema.index({
+  status: 1,
+});
+
+RequestApplicationSchema.index({
+  requestId: 1,
+  status: 1,
+});
+
 const RequestApplicationModel =
   (mongoose.models
     .RequestApplication as Model<IRequestApplication>) ||

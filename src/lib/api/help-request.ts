@@ -8,6 +8,10 @@ import type {
   HelpRequestResponse,
 } from "@/types/help-request";
 
+import type {
+  RequestApplicationListResponse
+} from "@/types/request-application";
+
 const API = "/api/help-request";
 
 export async function createHelpRequest(
@@ -119,3 +123,17 @@ export async function completeRequest(
 
   return response.data;
 }
+
+
+export async function getApplications(
+  requestId: string
+) {
+  const response =
+    await axios.get<RequestApplicationListResponse>(
+      `${API}/${requestId}/applications`
+    );
+
+  return response.data;
+}
+
+

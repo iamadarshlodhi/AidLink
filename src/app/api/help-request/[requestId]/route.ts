@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
 import HelpRequestModel from "@/model/HelpRequest";
@@ -32,6 +33,18 @@ export async function GET(
 
     const { requestId } = await params;
 
+    if (!mongoose.Types.ObjectId.isValid(requestId)) {
+      return Response.json(
+        {
+          success: false,
+          message: "Invalid request id.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
     const helpRequest =
       await HelpRequestModel.findById(
         requestId
@@ -44,6 +57,7 @@ export async function GET(
           "acceptedHelpers",
           "name username profileImage averageRating trustScore verificationStatus"
         )
+        .lean();
 
     if (!helpRequest) {
       return Response.json(
@@ -118,18 +132,22 @@ export async function PATCH(
 
     const { requestId } = await params;
 
+    if (!mongoose.Types.ObjectId.isValid(requestId)) {
+      return Response.json(
+        {
+          success: false,
+          message: "Invalid request id.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
     const helpRequest =
       await HelpRequestModel.findById(
         requestId
-      )
-        .populate(
-          "requester",
-          "name username profileImage averageRating trustScore verificationStatus"
-        )
-        .populate(
-          "acceptedHelpers",
-          "name username profileImage averageRating trustScore verificationStatus"
-        );
+      );
 
     if (!helpRequest) {
       return Response.json(
@@ -217,7 +235,13 @@ export async function PATCH(
           new: true,
           runValidators: true,
         }
-      );
+      ).populate(
+        "requester",
+        "name username profileImage averageRating trustScore verificationStatus"
+      ).populate(
+        "acceptedHelpers",
+        "name username profileImage averageRating trustScore verificationStatus"
+      )
 
     return Response.json(
       {
@@ -280,18 +304,22 @@ export async function DELETE(
 
     const { requestId } = await params;
 
+    if (!mongoose.Types.ObjectId.isValid(requestId)) {
+      return Response.json(
+        {
+          success: false,
+          message: "Invalid request id.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
     const helpRequest =
       await HelpRequestModel.findById(
         requestId
-      )
-        .populate(
-          "requester",
-          "name username profileImage averageRating trustScore verificationStatus"
-        )
-        .populate(
-          "acceptedHelpers",
-          "name username profileImage averageRating trustScore verificationStatus"
-        );
+      );
 
     if (!helpRequest) {
       return Response.json(

@@ -115,19 +115,35 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
 
-    const validation = helpRequestQuerySchema.safeParse({
-      page: searchParams.get("page"),
-      limit: searchParams.get("limit"),
-      q: searchParams.get("q"),
-      category: searchParams.get("category"),
-      mode: searchParams.get("mode"),
-      taskType: searchParams.get("taskType"),
-      urgency: searchParams.get("urgency"),
-      status: searchParams.get("status"),
-      sort: searchParams.get("sort"),
-    });
+    const queryParams = {
+      page: searchParams.get("page") || undefined,
+      limit: searchParams.get("limit") || undefined,
+      q: searchParams.get("q") || undefined,
+      category: searchParams.get("category") || undefined,
+      mode: searchParams.get("mode") || undefined,
+      taskType: searchParams.get("taskType") || undefined,
+      urgency: searchParams.get("urgency") || undefined,
+      status: searchParams.get("status") || undefined,
+      sort: searchParams.get("sort") || undefined,
+    };
+
+    const validation = helpRequestQuerySchema.safeParse(queryParams);
+
+    // console.log({
+    //   page: searchParams.get("page"),
+    //   limit: searchParams.get("limit"),
+    //   q: searchParams.get("q"),
+    //   category: searchParams.get("category"),
+    //   mode: searchParams.get("mode"),
+    //   taskType: searchParams.get("taskType"),
+    //   urgency: searchParams.get("urgency"),
+    //   status: searchParams.get("status"),
+    //   sort: searchParams.get("sort"),
+    // });
 
     if (!validation.success) {
+      // console.log("Validation Error:");
+      // console.log(validation.error.issues);
       return Response.json(
         {
           success: false,
@@ -230,7 +246,7 @@ export async function GET(request: Request) {
       }
     );
   } catch (error) {
-    console.error("GET /api/help-request:", error);
+    // console.error("GET /api/help-request:", error);
 
     return Response.json(
       {
