@@ -1,15 +1,12 @@
 "use client";
 
-import {
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-import { acceptHelper } from "@/lib/api/help-request";
+import { acceptHelper } from "@/lib/api/request-application";
 
 export function useAcceptHelper() {
-  const queryClient =
-    useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
@@ -24,7 +21,11 @@ export function useAcceptHelper() {
         applicationId
       ),
 
-    onSuccess: (_, variables) => {
+    onSuccess(_, variables) {
+      toast.success(
+        "Application accepted."
+      );
+
       queryClient.invalidateQueries({
         queryKey: [
           "applications",
@@ -38,6 +39,13 @@ export function useAcceptHelper() {
           variables.requestId,
         ],
       });
+    },
+
+    onError(error: any) {
+      toast.error(
+        error?.response?.data?.message ??
+          "Failed to accept application."
+      );
     },
   });
 }

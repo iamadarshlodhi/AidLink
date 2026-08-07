@@ -109,3 +109,14 @@ export interface HelpRequestResponse {
   message: string;
   data: HelpRequest;
 }
+export interface HelpRequestDetailResponse {
+  success: boolean;
+  message: string;
+  data: HelpRequestDetail;
+}
+
+export interface HelpRequestDetail
+  extends HelpRequest {
+  isOwner: boolean;
+  hasApplied: boolean;
+}

@@ -28,7 +28,7 @@ export default function MyRequests({
         </div>
 
         <Button variant="outline" asChild>
-          <Link href="/requests/my">
+          <Link href="/help-request/my">
             View All
           </Link>
         </Button>
@@ -46,7 +46,7 @@ export default function MyRequests({
           </p>
 
           <Button asChild className="mt-5">
-            <Link href="/requests/create">
+            <Link href="/help-request/create">
               Create Request
             </Link>
           </Button>
@@ -57,7 +57,7 @@ export default function MyRequests({
             <RequestCard
               key={request._id}
               request={request}
-              href={`/requests/${request._id}`}
+              href={`/help-request/${request._id}`}
             />
           ))}
         </div>

@@ -1,8 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-
-import { getApplications } from "@/lib/api/help-request";
+import { getApplications } from "@/lib/api/request-application";
 
 export function useApplications(
   requestId: string

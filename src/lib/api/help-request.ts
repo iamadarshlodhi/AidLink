@@ -3,6 +3,8 @@ import axios from "axios";
 import type {
   CreateHelpRequestData,
   HelpRequest,
+  HelpRequestDetail,
+  HelpRequestDetailResponse,
   HelpRequestFilters,
   HelpRequestListResponse,
   HelpRequestResponse,
@@ -41,9 +43,9 @@ export async function getHelpRequests(
 
 export async function getHelpRequestById(
   requestId: string
-): Promise<HelpRequest> {
+): Promise<HelpRequestDetail> {
   const response =
-    await axios.get<HelpRequestResponse>(
+    await axios.get<HelpRequestDetailResponse>(
       `${API}/${requestId}`
     );
 
@@ -67,10 +69,14 @@ export async function getMyAppliedRequests() {
 }
 
 export async function applyToRequest(
-  requestId: string
+  requestId: string,
+  interestNote: string
 ) {
   const response = await axios.post(
-    `${API}/${requestId}/apply`
+    `${API}/${requestId}/apply`,
+    {
+      interestNote: interestNote ?? "",
+    }
   );
 
   return response.data;

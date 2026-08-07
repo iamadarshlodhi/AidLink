@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
 import HelpRequestModel from "@/model/HelpRequest";
 import { updateHelpRequestSchema } from "@/schemas/updateHelpRequestSchema";
+import RequestApplicationModel from "@/model/RequestApplication";
 
 export async function GET(
   request: Request,
@@ -48,16 +49,15 @@ export async function GET(
     const helpRequest =
       await HelpRequestModel.findById(
         requestId
-      )
-        .populate(
+      ).populate(
           "requester",
           "name username profileImage averageRating trustScore verificationStatus"
-        )
-        .populate(
+      )
+      .populate(
           "acceptedHelpers",
           "name username profileImage averageRating trustScore verificationStatus"
-        )
-        .lean();
+      )
+      .lean();
 
     if (!helpRequest) {
       return Response.json(
@@ -72,12 +72,30 @@ export async function GET(
       );
     }
 
+    const isOwner =
+      helpRequest.requester._id.toString() ===
+      session.user.id;      
+    
+
+    const hasApplied = await RequestApplicationModel.exists({
+      requestId,
+      helper: session.user.id,
+      status: {
+        $ne: "withdrawn",
+      },
+    });  
+    
+
     return Response.json(
       {
         success: true,
         message:
           "Help request fetched successfully.",
-        data: helpRequest,
+        data:{ 
+          ...helpRequest,
+          isOwner,
+          hasApplied: !!hasApplied,
+        },
       },
       {
         status: 200,

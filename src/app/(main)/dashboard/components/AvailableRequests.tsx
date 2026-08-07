@@ -29,7 +29,7 @@ export default function AvailableRequests({
         </div>
 
         <Button variant="outline" asChild>
-          <Link href="/requests">
+          <Link href="/help-request">
             Browse All
           </Link>
         </Button>
@@ -52,7 +52,7 @@ export default function AvailableRequests({
             <RequestCard
               key={request._id}
               request={request}
-              href={`/requests/${request._id}`}
+              href={`/help-request/${request._id}`}
             />
           ))}
         </div>

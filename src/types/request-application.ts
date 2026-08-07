@@ -11,7 +11,7 @@ export interface RequestApplication {
   _id: string;
   requestId: string;
   helper: HelpRequester;
-  message: string;
+  message?: string;
   status: ApplicationStatus;
 
   appliedAt: string;

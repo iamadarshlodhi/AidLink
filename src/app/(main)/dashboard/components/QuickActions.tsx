@@ -47,7 +47,7 @@ export default function QuickActions() {
         </p>
 
         <Button asChild variant="secondary" className="mt-6">
-          <Link href="/requests">
+          <Link href="/help-request">
             Explore Requests
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

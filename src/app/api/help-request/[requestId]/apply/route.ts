@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { applyTaskSchema } from "@/schemas/applyTaskSchema";
 import { auth } from "@/auth";
 import { createNotification } from "@/lib/createNotification";
+import mongoose from "mongoose";
 
 export async function POST(request: Request, { params }: { params: Promise<{ requestId: string }> }) {
     try {
@@ -40,6 +41,19 @@ export async function POST(request: Request, { params }: { params: Promise<{ req
         }
 
         const { requestId } = await params;
+
+        if (!mongoose.Types.ObjectId.isValid(requestId)) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Invalid request id.",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+
         const helpRequest = await HelpRequest.findById(requestId);
         if (!helpRequest) {
             return NextResponse.json(
@@ -57,6 +71,21 @@ export async function POST(request: Request, { params }: { params: Promise<{ req
                 {
                     success: false,
                     message: "Cannot apply to this help request.",
+                },
+                {
+                    status: 400,
+                }
+            );
+        }
+
+        if (
+            helpRequest.acceptedHelpers.length >=
+            helpRequest.helpersRequired
+        ) {
+            return NextResponse.json(
+                {
+                    success: false,
+                    message: "Required helpers have already been accepted.",
                 },
                 {
                     status: 400,
@@ -93,7 +122,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ req
                     message: "You have already applied to this help request.",
                 },
                 {
-                    status: 400,
+                    status: 409,
                 }
             );
         }
@@ -128,6 +157,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ req
 
 
     } catch (error) {
+        console.error("Error applying to help request:", error);
         return NextResponse.json(
             {
                 success: false,

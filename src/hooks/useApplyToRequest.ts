@@ -3,41 +3,47 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-import { rejectHelper } from "@/lib/api/request-application";
+import { applyToRequest } from "@/lib/api/help-request";
 
-export function useRejectHelper() {
+export function useApplyToRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: ({
       requestId,
-      applicationId,
+      interestNote,
     }: {
       requestId: string;
-      applicationId: string;
+      interestNote: string;
     }) =>
-      rejectHelper(
+      applyToRequest(
         requestId,
-        applicationId
+        interestNote
       ),
 
-    onSuccess(_, variables) {
+    onSuccess: (_, variables) => {
       toast.success(
-        "Application rejected."
+        "Application submitted successfully."
       );
 
       queryClient.invalidateQueries({
         queryKey: [
-          "applications",
+          "help-request",
           variables.requestId,
+        ],
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [
+          "my-applied-requests",
         ],
       });
     },
 
-    onError(error: any) {
+    onError: (error: any) => {
       toast.error(
         error?.response?.data?.message ??
-          "Failed to reject application."
+          "Failed to submit application."
       );
     },
   });

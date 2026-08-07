@@ -52,12 +52,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ requ
             requestId,
         }).populate(
             "helper",
-            "name username profilePicture trustScore averageRating skills"
-        ).sort({ appliedAt: -1 });
+            "name username profileImage trustScore averageRating verificationStatus"
+        ).sort({ appliedAt: -1 })
+        .lean();
         return NextResponse.json(
             {
                 success: true,
                 message: "Applications fetched successfully.",
+                count: applications.length,
                 data: applications,
             },
             {
