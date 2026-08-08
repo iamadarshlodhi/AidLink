@@ -53,7 +53,7 @@ export async function GET(request: Request) {
         })
           .populate(
             "sender",
-            "name username profileImage"
+            "name username profilePicture"
           )
           .sort({
             createdAt: -1,

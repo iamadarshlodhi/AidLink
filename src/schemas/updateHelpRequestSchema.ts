@@ -1,63 +1,62 @@
 import { z } from "zod";
 
-export const updateHelpRequestSchema =
-  z.object({
-    title: z
-      .string()
-      .min(5)
-      .max(100)
-      .optional(),
+export const updateHelpRequestSchema = z.object({
+  title: z
+    .string()
+    .min(5, "Title must be at least 5 characters")
+    .max(100, "Title cannot exceed 100 characters"),
 
-    description: z
-      .string()
-      .min(20)
-      .max(1000)
-      .optional(),
+  description: z
+    .string()
+    .min(20, "Description must be at least 20 characters")
+    .max(1000, "Description cannot exceed 1000 characters"),
 
-    category: z
-      .enum([
-        "medical",
-        "education",
-        "food",
-        "transport",
-        "shelter",
-        "other",
-      ])
-      .optional(),
+  category: z.enum([
+    "medical",
+    "education",
+    "food",
+    "transport",
+    "shelter",
+    "other",
+  ]),
 
-    urgency: z
-      .enum([
-        "low",
-        "medium",
-        "high",
-        "critical",
-      ])
-      .optional(),
+  urgency: z.enum([
+    "low",
+    "medium",
+    "high",
+    "critical",
+  ]),
 
-    taskType: z
-      .enum([
-        "online",
-        "offline",
-      ])
-      .optional(),
+  mode: z.enum([
+    "online",
+    "offline",
+  ]),
 
-    paymentType: z
-      .enum([
-        "paid",
-        "volunteer",
-      ])
-      .optional(),
+  taskType: z.enum([
+    "paid",
+    "volunteer",
+  ]),
 
-    paymentAmount: z
-      .number()
-      .min(0)
-      .optional(),
+  helpersRequired: z
+    .number()
+    .int()
+    .min(1)
+    .max(20),
 
-    deadline: z
-      .date()
-      .optional(),
+  tentativePayment: z
+    .number()
+    .min(0)
+    .optional(),
 
-    images: z
-      .array(z.string())
-      .optional(),
+  // Important: JSON sends Date as string
+  deadline: z.coerce.date(),
+
+  location: z
+    .string()
+    .max(500)
+    .optional(),
+
+  images: z
+    .array(z.string())
+    .optional(),
 });

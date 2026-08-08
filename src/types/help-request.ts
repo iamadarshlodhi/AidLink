@@ -35,7 +35,7 @@ export interface HelpRequester {
   _id: string;
   name: string;
   username: string;
-  profileImage?: string;
+  profilePicture?: string;
   averageRating?: number;
   trustScore?: number;
   verificationStatus?: string;
@@ -119,4 +119,5 @@ export interface HelpRequestDetail
   extends HelpRequest {
   isOwner: boolean;
   hasApplied: boolean;
+  isAdmin: boolean;
 }

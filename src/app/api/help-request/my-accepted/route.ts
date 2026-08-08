@@ -30,9 +30,9 @@ export async function GET() {
             .populate({
                 path: "requestId",
                 select: "title status category taskType mode deadline requester helpersRequired acceptedHelpers createdAt",
-                populate: {
+                    populate: {
                     path: "requester",
-                    select: "username name profileImage averageRating",
+                    select: "username name profilePicture averageRating",
                 },
             })
             .sort({

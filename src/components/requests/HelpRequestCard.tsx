@@ -89,7 +89,7 @@ export default function HelpRequestCard({
               <Avatar>
                 <AvatarImage
                   src={
-                    requester.profileImage
+                    requester.profilePicture
                   }
                 />
 

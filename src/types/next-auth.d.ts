@@ -4,28 +4,37 @@ declare module "next-auth" {
   interface Session {
     user: {
       id: string;
-      username: string;
-      role: string;
-      trustScore: number;
+      name: string;
+      username?: string;
+      role?: string;
+      trustScore?: number;
       profilePicture?: string;
+      isGoogleUser?: boolean;
+      googleOnboarding?: boolean;
     } & DefaultSession["user"];
   }
 
   interface User {
     id: string;
-    username: string;
-    role: string;
-    trustScore: number;
+    name: string;
+    username?: string;
+    role?: string;
+    trustScore?: number;
     profilePicture?: string;
+    isGoogleUser?: boolean;
+    googleOnboarding?: boolean;
   }
 }
 
-declare module "@auth/core/jwt" {
+declare module "next-auth/jwt" {
   interface JWT {
-    id: string;
-    username: string;
-    role: string;
-    trustScore: number;
+    id?: string;
+    name?: string;
+    username?: string;
+    role?: string;
+    trustScore?: number;
     profilePicture?: string;
+    isGoogleUser?: boolean;
+    googleOnboarding?: boolean;
   }
 }

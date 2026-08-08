@@ -6,6 +6,7 @@ import RequestImageGallery from "./RequestImageGallery";
 import RequestInfo from "./RequestInfo";
 import RequesterCard from "./RequesterCard";
 import ActionButtons from "./ActionButtons";
+
 import { HelpRequester } from "@/types/help-request";
 
 interface HelpRequestDetailProps {
@@ -24,7 +25,7 @@ export default function HelpRequestDetail({
 
   if (isLoading) {
     return (
-      <div className="text-center py-10">
+      <div className="flex justify-center py-10">
         Loading request...
       </div>
     );
@@ -32,7 +33,7 @@ export default function HelpRequestDetail({
 
   if (isError || !request) {
     return (
-      <div className="text-center py-10 text-red-500">
+      <div className="flex justify-center py-10 text-sm text-red-500">
         {(error as any)?.response?.data?.message ??
           "Failed to load request."}
       </div>
@@ -40,20 +41,30 @@ export default function HelpRequestDetail({
   }
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
-        <RequestImageGallery images={request.images} />
+    <div className="space-y-6">
+      {/* Images */}
+      <RequestImageGallery
+        images={request.images}
+      />
 
-        <RequestInfo request={request} />
+      {/* Request information */}
+      <RequestInfo request={request} />
 
-        <RequesterCard 
-            requester={request.requester as HelpRequester} 
-        />
+      {/* Requester */}
+      <RequesterCard
+        requester={
+          request.requester as HelpRequester
+        }
+      />
 
-        <ActionButtons 
-          requestId={request._id} 
-          isOwner={request.isOwner}
-          hasApplied={request.hasApplied}
-        />
+      {/* Actions */}
+      <ActionButtons
+        requestId={request._id}
+        isOwner={request.isOwner}
+        isAdmin={request.isAdmin}
+        hasApplied={request.hasApplied}
+        status={request.status}
+      />
     </div>
   );
 }

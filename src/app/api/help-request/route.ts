@@ -208,10 +208,10 @@ export async function GET(request: Request) {
         requester
         createdAt
       `)
-      .populate({
+        .populate({
         path: "requester",
         select:
-          "name username profileImage averageRating trustScore verificationStatus",
+          "name username profilePicture averageRating trustScore verificationStatus",
         match: {
           isDeleted: false,
         },

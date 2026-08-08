@@ -4,17 +4,17 @@ import { Camera } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
-interface ProfileImageUploadProps {
+interface ProfilePictureUploadProps {
   image?: string;
   name: string;
   onImageSelect: (file: File) => void;
 }
 
-export default function ProfileImageUpload({
+export default function ProfilePictureUpload({
   image,
   name,
   onImageSelect,
-}: ProfileImageUploadProps) {
+}: ProfilePictureUploadProps) {
   const initials =
     name
       .split(" ")
@@ -36,7 +36,7 @@ export default function ProfileImageUpload({
           </AvatarFallback>
         </Avatar>
 
-        <label htmlFor="profile-image">
+        <label htmlFor="profile-picture">
           <Button
             size="icon"
             type="button"
@@ -50,7 +50,7 @@ export default function ProfileImageUpload({
         </label>
 
         <input
-          id="profile-image"
+          id="profile-picture"
           type="file"
           accept="image/*"
           className="hidden"

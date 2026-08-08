@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { uploadProfileImage } from "@/lib/uploadProfileImage";
+import { uploadProfilePicture } from "@/lib/uploadProfilePicture";
 import { NextRequest, NextResponse } from "next/server";
 
 import fs from "fs/promises";
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     await fs.writeFile(tempFilePath, buffer);
 
-    const result = await uploadProfileImage(
+    const result = await uploadProfilePicture(
       tempFilePath,
       session.user.id
     );
@@ -59,12 +59,12 @@ export async function POST(req: NextRequest) {
       imageUrl: result.secure_url,
     });
   } catch (error) {
-    console.error("Profile image upload error:", error);
+    console.error("Profile picture upload error:", error);
 
     return NextResponse.json(
       {
         success: false,
-        message: "Failed to upload profile image",
+          message: "Failed to upload profile picture",
       },
       {
         status: 500,

@@ -52,7 +52,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ requ
             requestId,
         }).populate(
             "helper",
-            "name username profileImage trustScore averageRating verificationStatus"
+            "name username profilePicture trustScore averageRating verificationStatus"
         ).sort({ appliedAt: -1 })
         .lean();
         return NextResponse.json(

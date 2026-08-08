@@ -1,7 +1,7 @@
 import { UploadApiResponse } from "cloudinary";
 import cloudinary from "@/lib/cloudinary";
 
-export async function uploadProfileImage(
+export async function uploadProfilePicture(
   filePath: string,
   userId: string
 ): Promise<UploadApiResponse> {

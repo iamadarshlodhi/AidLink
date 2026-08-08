@@ -1,30 +1,48 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
+
 import { toast } from "sonner";
 
-import { withdrawApplication } from "@/lib/api/help-request";
+import { withdrawApplication } from "@/lib/api/request-application";
 
 export function useWithdrawApplication() {
-  const queryClient = useQueryClient();
+  const queryClient =
+    useQueryClient();
 
   return useMutation({
-    mutationFn: (requestId: string) =>
-      withdrawApplication(requestId),
+    mutationFn: ({
+      requestId,
+      reason,
+    }: {
+      requestId: string;
+      reason?: string;
+    }) =>
+      withdrawApplication(
+        requestId,
+        reason
+      ),
 
-    onSuccess: (_, requestId) => {
-      toast.success("Application withdrawn successfully.");
+    onSuccess: (_, variables) => {
+      toast.success(
+        "Application withdrawn successfully."
+      );
 
       queryClient.invalidateQueries({
-        queryKey: ["help-request", requestId],
+        queryKey: [
+          "applications",
+          variables.requestId,
+        ],
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["applications", requestId],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: ["my-applied-requests"],
+        queryKey: [
+          "help-request",
+          variables.requestId,
+        ],
       });
     },
 

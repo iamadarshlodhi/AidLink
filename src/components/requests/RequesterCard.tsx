@@ -15,7 +15,7 @@ export default function RequesterCard({
       <CardContent className="flex items-center gap-4 pt-6">
         <img
           src={
-            requester.profileImage ||
+            requester.profilePicture ||
             "/default-avatar.png"
           }
           alt={requester.name}

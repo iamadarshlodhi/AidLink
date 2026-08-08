@@ -12,7 +12,8 @@ export async function proxy(
 
   const isAuthPage =
     pathname.startsWith("/sign-in") ||
-    pathname.startsWith("/sign-up");
+    pathname.startsWith("/sign-up") ||
+    pathname.startsWith("/forgot-password");
 
   const isProtectedRoute = pathname.startsWith("/dashboard");
 
@@ -38,6 +39,7 @@ export const config = {
     "/",
     "/sign-in",
     "/sign-up",
+    "/forgot-password",
     "/dashboard/:path*",
   ],
 };

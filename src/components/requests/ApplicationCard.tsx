@@ -28,7 +28,7 @@ export default function ApplicationCard({
         <div className="flex items-center gap-4">
           <Image
             src={
-              application.helper.profileImage ||
+              application.helper.profilePicture ||
               "/default-avatar.png"
             }
             alt={application.helper.name}

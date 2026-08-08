@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 import { auth } from "@/auth";
 import dbConnect from "@/lib/dbConnect";
 import HelpRequestModel from "@/model/HelpRequest";
-import { updateHelpRequestSchema } from "@/schemas/updateHelpRequestSchema";
 import RequestApplicationModel from "@/model/RequestApplication";
+import { updateHelpRequestSchema } from "@/schemas/updateHelpRequestSchema";
 
 export async function GET(
   request: Request,
@@ -47,24 +47,22 @@ export async function GET(
     }
 
     const helpRequest =
-      await HelpRequestModel.findById(
-        requestId
-      ).populate(
+      await HelpRequestModel.findById(requestId)
+        .populate(
           "requester",
-          "name username profileImage averageRating trustScore verificationStatus"
-      )
-      .populate(
+          "name username profilePicture averageRating trustScore verificationStatus"
+        )
+        .populate(
           "acceptedHelpers",
-          "name username profileImage averageRating trustScore verificationStatus"
-      )
-      .lean();
+          "name username profilePicture averageRating trustScore verificationStatus"
+        )
+        .lean();
 
     if (!helpRequest) {
       return Response.json(
         {
           success: false,
-          message:
-            "Help request not found.",
+          message: "Help request not found.",
         },
         {
           status: 404,
@@ -74,26 +72,29 @@ export async function GET(
 
     const isOwner =
       helpRequest.requester._id.toString() ===
-      session.user.id;      
-    
+      session.user.id;
 
-    const hasApplied = await RequestApplicationModel.exists({
-      requestId,
-      helper: session.user.id,
-      status: {
-        $ne: "withdrawn",
-      },
-    });  
-    
+    const isAdmin =
+      session.user.role === "admin";
+
+    const hasApplied =
+      await RequestApplicationModel.exists({
+        requestId,
+        helper: session.user.id,
+        status: {
+          $ne: "withdrawn",
+        },
+      });
 
     return Response.json(
       {
         success: true,
         message:
           "Help request fetched successfully.",
-        data:{ 
+        data: {
           ...helpRequest,
           isOwner,
+          isAdmin,
           hasApplied: !!hasApplied,
         },
       },
@@ -120,7 +121,11 @@ export async function GET(
   }
 }
 
-
+/*
+ * ==========================================
+ * UPDATE HELP REQUEST
+ * ==========================================
+ */
 export async function PATCH(
   request: Request,
   {
@@ -136,7 +141,7 @@ export async function PATCH(
   try {
     const session = await auth();
 
-    if (!session || !session.user) {
+    if (!session?.user) {
       return Response.json(
         {
           success: false,
@@ -150,7 +155,11 @@ export async function PATCH(
 
     const { requestId } = await params;
 
-    if (!mongoose.Types.ObjectId.isValid(requestId)) {
+    if (
+      !mongoose.Types.ObjectId.isValid(
+        requestId
+      )
+    ) {
       return Response.json(
         {
           success: false,
@@ -171,8 +180,7 @@ export async function PATCH(
       return Response.json(
         {
           success: false,
-          message:
-            "Help request not found.",
+          message: "Help request not found.",
         },
         {
           status: 404,
@@ -180,7 +188,9 @@ export async function PATCH(
       );
     }
 
-    // Owner or Admin
+    // -----------------------------
+    // Authorization
+    // -----------------------------
 
     const isOwner =
       helpRequest.requester.toString() ===
@@ -202,11 +212,11 @@ export async function PATCH(
       );
     }
 
-    // Only open requests can be edited
+    // -----------------------------
+    // Request status
+    // -----------------------------
 
-    if (
-      helpRequest.status !== "open"
-    ) {
+    if (helpRequest.status !== "open") {
       return Response.json(
         {
           success: false,
@@ -219,8 +229,20 @@ export async function PATCH(
       );
     }
 
-    const body =
-      await request.json();
+    // -----------------------------
+    // Parse body
+    // -----------------------------
+
+    const body = await request.json();
+
+    console.log(
+      "UPDATE REQUEST BODY:",
+      body
+    );
+
+    // -----------------------------
+    // Validate
+    // -----------------------------
 
     const validation =
       updateHelpRequestSchema.safeParse(
@@ -228,11 +250,15 @@ export async function PATCH(
       );
 
     if (!validation.success) {
+      console.error(
+        "UPDATE VALIDATION ERROR:",
+        validation.error.flatten()
+      );
+
       return Response.json(
         {
           success: false,
-          message:
-            "Validation failed.",
+          message: "Validation failed.",
           errors:
             validation.error.flatten(),
         },
@@ -242,24 +268,60 @@ export async function PATCH(
       );
     }
 
+    const data = validation.data;
+
+    // -----------------------------
+    // Paid / volunteer handling
+    // -----------------------------
+
+    if (data.taskType === "volunteer") {
+      data.tentativePayment = undefined;
+    }
+
+    // -----------------------------
+    // Offline / online handling
+    // -----------------------------
+
+    if (data.mode === "online") {
+      data.location = undefined;
+    }
+
+    // -----------------------------
+    // Update
+    // -----------------------------
+
     const updatedRequest =
       await HelpRequestModel.findByIdAndUpdate(
         requestId,
         {
-          $set:
-            validation.data,
+          $set: data,
         },
         {
           new: true,
           runValidators: true,
         }
-      ).populate(
-        "requester",
-        "name username profileImage averageRating trustScore verificationStatus"
-      ).populate(
-        "acceptedHelpers",
-        "name username profileImage averageRating trustScore verificationStatus"
       )
+        .populate(
+          "requester",
+          "name username profilePicture averageRating trustScore verificationStatus"
+        )
+        .populate(
+          "acceptedHelpers",
+          "name username profilePicture averageRating trustScore verificationStatus"
+        );
+
+    if (!updatedRequest) {
+      return Response.json(
+        {
+          success: false,
+          message:
+            "Failed to update help request.",
+        },
+        {
+          status: 500,
+        }
+      );
+    }
 
     return Response.json(
       {
@@ -291,8 +353,11 @@ export async function PATCH(
   }
 }
 
-
-
+/*
+ * ==========================================
+ * DELETE HELP REQUEST
+ * ==========================================
+ */
 export async function DELETE(
   request: Request,
   {
@@ -352,8 +417,9 @@ export async function DELETE(
       );
     }
 
-    // Check ownership
-
+    /*
+     * Only requester or admin can delete.
+     */
     const isOwner =
       helpRequest.requester.toString() ===
       session.user.id;
@@ -374,11 +440,11 @@ export async function DELETE(
       );
     }
 
-    // Prevent deletion after completion
-
+    /*
+     * Completed requests cannot be deleted.
+     */
     if (
-      helpRequest.status ===
-      "completed"
+      helpRequest.status === "completed"
     ) {
       return Response.json(
         {
@@ -392,6 +458,62 @@ export async function DELETE(
       );
     }
 
+    /*
+     * In-progress requests cannot be deleted.
+     *
+     * A helper may already be working on
+     * the task, so deleting it would leave
+     * inconsistent application/task state.
+     */
+    if (
+      helpRequest.status === "in-progress"
+    ) {
+      return Response.json(
+        {
+          success: false,
+          message:
+            "In-progress requests cannot be deleted.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    /*
+     * Safety check:
+     * Don't delete if a helper has already
+     * been accepted.
+     */
+    if (
+      helpRequest.acceptedHelpers &&
+      helpRequest.acceptedHelpers.length > 0
+    ) {
+      return Response.json(
+        {
+          success: false,
+          message:
+            "This request cannot be deleted after a helper has been accepted.",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    /*
+     * Delete related applications first.
+     *
+     * This prevents orphaned RequestApplication
+     * documents.
+     */
+    await RequestApplicationModel.deleteMany({
+      requestId,
+    });
+
+    /*
+     * Delete the help request.
+     */
     await HelpRequestModel.findByIdAndDelete(
       requestId
     );

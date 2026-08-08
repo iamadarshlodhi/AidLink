@@ -1,4 +1,3 @@
-import { match } from "assert";
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface IEmergencyContact {

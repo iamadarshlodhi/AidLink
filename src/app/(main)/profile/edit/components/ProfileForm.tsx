@@ -22,7 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { Button } from "@/components/ui/button";
 
-import ProfileImageUpload from "./ProfileImageUpload";
+import ProfilePictureUpload from "./ProfilePictureUpload";
 import SkillsInput from "./SkillsInput";
 import LocationForm from "./LocationForm";
 import EmergencyContacts from "./EmergencyContacts";
@@ -99,7 +99,7 @@ export default function ProfileForm({
         onSubmit={form.handleSubmit(submit)}
         className="space-y-8"
       >
-        <ProfileImageUpload
+        <ProfilePictureUpload
           image={preview}
           name={user.name}
           onImageSelect={setImage}

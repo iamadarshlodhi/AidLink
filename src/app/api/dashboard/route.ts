@@ -14,6 +14,9 @@ export async function GET() {
 
     const session = await auth();
 
+    console.log("DASHBOARD SESSION:", session);
+    console.log("DASHBOARD USER:", session?.user);
+
     if (!session?.user?.id) {
       return NextResponse.json(
         {
