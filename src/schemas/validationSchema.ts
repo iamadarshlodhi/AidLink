@@ -129,10 +129,13 @@ export const ratingValidation = z
 export const reviewValidation = z
   .string()
   .trim()
-  .min(5, "Review must be at least 5 characters")
-  .max(500, "Review cannot exceed 500 characters");
-
-
+  .max(500, "Review cannot exceed 500 characters")
+  .refine(
+    (value) => value === "" || value.length >= 5,
+    {
+      message: "Review must be at least 5 characters",
+    }
+  );
 /* ==========================================
                 CHAT VALIDATIONS
 ========================================== */

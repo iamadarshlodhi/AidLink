@@ -1,6 +1,9 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
+import axios from "axios";
+import { toast } from "sonner";
 
 import {
   Card,
@@ -9,7 +12,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
+import { Button } from "@/components/ui/button";
 import WithdrawButton from "./WithdrawButton";
+import ReviewForm from "@/components/reviews/ReviewForm";
 
 import type { AppliedRequest } from "@/types/request-application";
 
@@ -22,6 +27,48 @@ export default function AppliedRequestCard({
 }: AppliedRequestCardProps) {
   const request = application.requestId;
 
+  const [isCompleting, setIsCompleting] =
+    useState(false);
+
+  const handleComplete = async () => {
+    try {
+      setIsCompleting(true);
+
+      const response = await axios.patch(
+        `/api/help-request/${request._id}/complete/${application._id}`
+      );
+
+      toast.success(
+        response.data.message ||
+          "Completion confirmed."
+      );
+
+      window.location.reload();
+    } catch (error: any) {
+      console.error(
+        "Complete task:",
+        error?.response?.data || error
+      );
+
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to mark task as completed."
+      );
+    } finally {
+      setIsCompleting(false);
+    }
+  };
+
+  const helperConfirmed =
+    application.helperConfirmed;
+
+  const requesterConfirmed =
+    application.requesterConfirmed;
+
+  const isCompleted =
+    application.status === "completed" &&
+    helperConfirmed &&
+    requesterConfirmed;
 
   return (
     <Card>
@@ -32,7 +79,9 @@ export default function AppliedRequestCard({
       </CardHeader>
 
       <CardContent className="space-y-5">
+
         {/* Request Info */}
+
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <p className="text-sm text-muted-foreground">
@@ -78,6 +127,7 @@ export default function AppliedRequestCard({
         </div>
 
         {/* Requester */}
+
         <div className="flex items-center gap-3">
           <Image
             src={
@@ -102,6 +152,7 @@ export default function AppliedRequestCard({
         </div>
 
         {/* Application */}
+
         <div>
           <p className="text-sm text-muted-foreground">
             Your message
@@ -114,6 +165,7 @@ export default function AppliedRequestCard({
         </div>
 
         {/* Status */}
+
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="text-sm">
             Application status:{" "}
@@ -130,12 +182,84 @@ export default function AppliedRequestCard({
           </span>
         </div>
 
+        {/* Completion Status */}
+
+        {application.status === "accepted" && (
+          <div className="space-y-1 rounded-md border p-3 text-sm">
+            <p>
+              Your completion:{" "}
+              <span className="font-medium">
+                {helperConfirmed
+                  ? "Confirmed"
+                  : "Pending"}
+              </span>
+            </p>
+
+            <p>
+              Requester confirmation:{" "}
+              <span className="font-medium">
+                {requesterConfirmed
+                  ? "Confirmed"
+                  : "Pending"}
+              </span>
+            </p>
+          </div>
+        )}
+
         {/* Withdraw */}
+
         {(application.status === "pending" ||
           application.status === "accepted") && (
           <WithdrawButton
             requestId={request._id}
           />
+        )}
+
+        {/* Mark Completed */}
+
+        {application.status === "accepted" &&
+          !helperConfirmed && (
+            <Button
+              className="w-full"
+              onClick={handleComplete}
+              disabled={isCompleting}
+            >
+              {isCompleting
+                ? "Marking..."
+                : "Mark as Completed"}
+            </Button>
+          )}
+
+        {/* Waiting for Requester */}
+
+        {application.status === "accepted" &&
+          helperConfirmed &&
+          !requesterConfirmed && (
+            <p className="rounded-md border p-3 text-center text-sm text-muted-foreground">
+              You marked this task as completed.
+              Waiting for requester confirmation.
+            </p>
+          )}
+
+        {/* Completed */}
+
+        {isCompleted && (
+          <>
+            <div className="rounded-md border p-3 text-center text-sm font-medium">
+              Task completed successfully.
+            </div>
+
+            {/* Review Requester */}
+
+            <ReviewForm
+              requestId={request._id}
+              applicationId={application._id}
+              revieweeName={request.requester.name}
+              onSuccess={() =>
+                window.location.reload()
+              }
+            />
+          </>
         )}
       </CardContent>
     </Card>

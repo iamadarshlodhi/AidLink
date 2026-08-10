@@ -11,7 +11,12 @@ export async function POST(request: Request) {
 
     const session = await auth();
 
-    if (!session || !session.user) {
+    console.log(
+      "GOOGLE COMPLETE SESSION:",
+      session
+    );
+
+    if (!session?.user?.email) {
       return NextResponse.json(
         {
           success: false,
@@ -24,8 +29,7 @@ export async function POST(request: Request) {
     }
 
     /*
-     * This route should only be used
-     * for Google users.
+     * This route is only for Google onboarding.
      */
     if (!session.user.isGoogleUser) {
       return NextResponse.json(
@@ -40,25 +44,15 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+     * User should still be in Google onboarding.
+     */
     if (!session.user.googleOnboarding) {
       return NextResponse.json(
         {
           success: false,
           message:
             "Google profile is already completed.",
-        },
-        {
-          status: 400,
-        }
-      );
-    }
-
-    if (!session.user.email) {
-      return NextResponse.json(
-        {
-          success: false,
-          message:
-            "Google email not available.",
         },
         {
           status: 400,
@@ -74,7 +68,7 @@ export async function POST(request: Request) {
     } = body;
 
     /*
-     * Validate required fields
+     * Validate username
      */
     if (
       !username ||
@@ -92,6 +86,9 @@ export async function POST(request: Request) {
       );
     }
 
+    /*
+     * Validate phone
+     */
     if (
       !phone ||
       typeof phone !== "string"
@@ -115,11 +112,11 @@ export async function POST(request: Request) {
       phone.trim();
 
     /*
-     * Check if email already exists
+     * Check email
      */
     const existingEmail =
       await UserModel.findOne({
-        email: session.user.email,
+        email: session.user.email.toLowerCase(),
         isDeleted: {
           $ne: true,
         },
@@ -187,14 +184,15 @@ export async function POST(request: Request) {
     }
 
     /*
-     * Generate a random password.
+     * Google users don't have an AidLink password.
      *
-     * Google users don't know this password.
-     * It only exists because your current
-     * User schema requires password.
+     * Your current User schema requires a password,
+     * so generate a random unusable password.
      */
     const randomPassword =
-      crypto.randomBytes(32).toString("hex");
+      crypto
+        .randomBytes(32)
+        .toString("hex");
 
     const hashedPassword =
       await bcrypt.hash(
@@ -203,19 +201,26 @@ export async function POST(request: Request) {
       );
 
     /*
-     * Create user
+     * Create AidLink user
      */
     const newUser =
       await UserModel.create({
         name:
           session.user.name || "",
+
         username: cleanUsername,
-        email: session.user.email,
+
+        email:
+          session.user.email.toLowerCase(),
+
         phone: cleanPhone,
+
         password: hashedPassword,
 
         profilePicture:
-          session.user.profilePicture || "",
+          session.user.profilePicture ||
+          session.user.image ||
+          "",
 
         role: "user",
 
@@ -225,7 +230,16 @@ export async function POST(request: Request) {
         trustScore: 50,
 
         phoneVerified: false,
+
+        isActive: true,
+
+        isDeleted: false,
       });
+
+    console.log(
+      "Google user created:",
+      newUser._id.toString()
+    );
 
     return NextResponse.json(
       {

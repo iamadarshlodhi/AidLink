@@ -213,3 +213,133 @@ export async function POST(
         );
     }
 }
+
+
+
+export async function GET(
+  request: Request,
+  {
+    params,
+  }: {
+    params: Promise<{
+      requestId: string;
+      applicationId: string;
+    }>;
+  }
+) {
+  try {
+    await dbConnect();
+
+    const session = await auth();
+
+    if (!session?.user) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Unauthorized",
+        },
+        {
+          status: 401,
+        }
+      );
+    }
+
+    const { requestId, applicationId } =
+      await params;
+
+    // Find help request
+    const helpRequest =
+      await HelpRequest.findById(requestId);
+
+    if (!helpRequest) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Help request not found.",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    // Find application
+    const application =
+      await RequestApplicationModel.findOne({
+        _id: applicationId,
+        requestId,
+      });
+
+    if (!application) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Application not found.",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    const userId = session.user.id;
+
+    // Only requester or helper can check review status
+    const isRequester =
+      helpRequest.requester.toString() ===
+      userId;
+
+    const isHelper =
+      application.helper.toString() ===
+      userId;
+
+    if (!isRequester && !isHelper) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "You are not authorized to view this review status.",
+        },
+        {
+          status: 403,
+        }
+      );
+    }
+
+    // Find review submitted by current user
+    const review =
+      await ReviewModel.findOne({
+        applicationId,
+        reviewer: userId,
+      }).lean();
+
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          hasReviewed: !!review,
+          review: review || null,
+        },
+      },
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    console.error(
+      "Get review status:",
+      error
+    );
+
+    return NextResponse.json(
+      {
+        success: false,
+        message:
+          "Failed to check review status.",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
+}
