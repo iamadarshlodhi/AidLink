@@ -7,6 +7,8 @@ import RequestInfo from "./RequestInfo";
 import RequesterCard from "./RequesterCard";
 import ActionButtons from "./ActionButtons";
 
+import ReportDialog from "../reports/ReportDialog";
+
 import { HelpRequester } from "@/types/help-request";
 
 interface HelpRequestDetailProps {
@@ -65,6 +67,16 @@ export default function HelpRequestDetail({
         hasApplied={request.hasApplied}
         status={request.status}
       />
+
+      {/* Report */}
+      {!request.isOwner && (
+        <div className="flex justify-end">
+          <ReportDialog
+            targetType="helpRequest"
+            targetId={request._id}
+          />
+        </div>
+      )}
     </div>
   );
 }

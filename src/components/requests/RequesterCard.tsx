@@ -1,7 +1,10 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Flag } from "lucide-react";
+
 import type { HelpRequester } from "@/types/help-request";
+import ReportDialog from "../reports/ReportDialog";
 
 interface RequesterCardProps {
   requester: HelpRequester;
@@ -22,7 +25,7 @@ export default function RequesterCard({
           className="h-16 w-16 rounded-full object-cover"
         />
 
-        <div>
+        <div className="flex-1">
           <h3 className="font-semibold">
             {requester.name}
           </h3>
@@ -44,6 +47,12 @@ export default function RequesterCard({
             {requester.verificationStatus}
           </p>
         </div>
+
+        {/* Report User */}
+        <ReportDialog
+          targetType="user"
+          targetId={requester._id}
+        />
       </CardContent>
     </Card>
   );
