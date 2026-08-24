@@ -17,7 +17,7 @@ const navLinks = [
   },
   {
     name: "Requests",
-    href: "/requests",
+    href: "/help-request",
   },
 ];
 

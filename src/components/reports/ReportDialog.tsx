@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -38,11 +38,43 @@ export default function ReportDialog({
   const [reason, setReason] = useState("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
   const [alreadyReported, setAlreadyReported] =
     useState(false);
 
   const [submitError, setSubmitError] =
     useState("");
+
+  /*
+   * Check whether the current user has already
+   * reported this target.
+   */
+  useEffect(() => {
+    const checkExistingReport = async () => {
+      try {
+        setIsChecking(true);
+
+        const response = await axios.get(
+          `/api/report/check?targetType=${targetType}&targetId=${targetId}`
+        );
+
+        if (response.data.alreadyReported) {
+          setAlreadyReported(true);
+        } else {
+          setAlreadyReported(false);
+        }
+      } catch (error: any) {
+        console.error(
+          "Check existing report:",
+          error?.response?.data || error
+        );
+      } finally {
+        setIsChecking(false);
+      }
+    };
+
+    checkExistingReport();
+  }, [targetType, targetId]);
 
   const handleSubmit = async (
     e: React.FormEvent<HTMLFormElement>
@@ -73,16 +105,14 @@ export default function ReportDialog({
         description: description.trim(),
       });
 
-      // Successful report
       setAlreadyReported(true);
+      setReason("");
+      setDescription("");
+      setSubmitError("");
 
       toast.success(
         "Report submitted successfully."
       );
-
-      setReason("");
-      setDescription("");
-      setSubmitError("");
 
       setOpen(false);
     } catch (error: any) {
@@ -92,18 +122,18 @@ export default function ReportDialog({
         error?.response?.data?.message ||
         "Failed to submit report.";
 
-
-      // Already reported
+      /*
+       * Duplicate report.
+       */
       if (status === 409) {
         setAlreadyReported(true);
         setSubmitError(
           "You have already reported this."
         );
 
-        // IMPORTANT:
-        // Keep dialog open so user can see the message.
         return;
       }
+
       console.error(
         "Submit report:",
         error?.response?.data || error
@@ -130,10 +160,26 @@ export default function ReportDialog({
   };
 
   /*
-   * If report was already submitted during this
-   * component session, show disabled button.
+   * While checking the database, don't allow
+   * the user to submit another report.
    */
-  if (alreadyReported && !open) {
+  if (isChecking) {
+    return (
+      <Button
+        variant="outline"
+        disabled
+        className="text-muted-foreground"
+      >
+        <Flag className="mr-2 h-4 w-4" />
+        Checking...
+      </Button>
+    );
+  }
+
+  /*
+   * Report already exists.
+   */
+  if (alreadyReported) {
     return (
       <Button
         variant="outline"
@@ -179,7 +225,6 @@ export default function ReportDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Already reported error */}
         {submitError && (
           <div className="rounded-md border border-red-500/30 bg-red-500/10 p-4">
             <p className="font-medium text-red-500">
@@ -205,9 +250,7 @@ export default function ReportDialog({
             <Select
               value={reason}
               onValueChange={setReason}
-              disabled={
-                isSubmitting || alreadyReported
-              }
+              disabled={isSubmitting}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select a reason" />
@@ -259,9 +302,7 @@ export default function ReportDialog({
               placeholder="Explain the issue..."
               maxLength={1000}
               rows={5}
-              disabled={
-                isSubmitting || alreadyReported
-              }
+              disabled={isSubmitting}
             />
 
             <p className="text-xs text-muted-foreground">
@@ -282,14 +323,10 @@ export default function ReportDialog({
             type="submit"
             variant="destructive"
             className="w-full"
-            disabled={
-              isSubmitting || alreadyReported
-            }
+            disabled={isSubmitting}
           >
             {isSubmitting
               ? "Submitting..."
-              : alreadyReported
-              ? "Already Reported"
               : "Submit Report"}
           </Button>
         </form>

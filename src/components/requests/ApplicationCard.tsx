@@ -4,6 +4,7 @@ import Image from "next/image";
 import axios from "axios";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import {
@@ -15,6 +16,7 @@ import { Button } from "@/components/ui/button";
 
 import AcceptButton from "./AcceptButton";
 import RejectButton from "./RejectButton";
+
 import ReviewForm from "@/components/reviews/ReviewForm";
 
 import type { RequestApplication } from "@/types/request-application";
@@ -29,6 +31,7 @@ export default function ApplicationCard({
   application,
 }: ApplicationCardProps) {
   const { data: session } = useSession();
+  const router = useRouter();
 
   const [isCompleting, setIsCompleting] =
     useState(false);
@@ -40,8 +43,12 @@ export default function ApplicationCard({
       ? application.helper
       : application.helper._id;
 
-  const isHelper = currentUserId === helperId;
+  const isHelper =
+    currentUserId === helperId;
 
+  /*
+   * Mark / confirm completion
+   */
   const handleCompletion = async () => {
     try {
       setIsCompleting(true);
@@ -71,6 +78,45 @@ export default function ApplicationCard({
     }
   };
 
+  /*
+   * Open / create conversation
+   */
+  const handleOpenChat = async () => {
+    try {
+      const response = await axios.post(
+        "/api/conversations",
+        {
+          requestId,
+          applicationId: application._id,
+        }
+      );
+
+      const conversation =
+        response.data.data;
+
+      if (!conversation?._id) {
+        toast.error(
+          "Failed to open conversation."
+        );
+        return;
+      }
+
+      router.push(
+        `/chat?conversationId=${conversation._id}`
+      );
+    } catch (error: any) {
+      console.error(
+        "Open chat:",
+        error?.response?.data || error
+      );
+
+      toast.error(
+        error?.response?.data?.message ||
+          "Failed to open chat."
+      );
+    }
+  };
+
   const bothConfirmed =
     application.helperConfirmed &&
     application.requesterConfirmed;
@@ -78,7 +124,6 @@ export default function ApplicationCard({
   return (
     <Card>
       <CardContent className="space-y-5 pt-6">
-
         {/* Helper Info */}
 
         <div className="flex items-center gap-4">
@@ -135,25 +180,38 @@ export default function ApplicationCard({
         {/* Confirmation Status */}
 
         {application.status === "accepted" && (
-          <div className="space-y-1 rounded-md border p-3 text-sm">
-            <p>
-              Helper confirmation:{" "}
-              <span className="font-medium">
-                {application.helperConfirmed
-                  ? "Confirmed"
-                  : "Pending"}
-              </span>
-            </p>
+          <>
+            <div className="space-y-1 rounded-md border p-3 text-sm">
+              <p>
+                Helper confirmation:{" "}
+                <span className="font-medium">
+                  {application.helperConfirmed
+                    ? "Confirmed"
+                    : "Pending"}
+                </span>
+              </p>
 
-            <p>
-              Requester confirmation:{" "}
-              <span className="font-medium">
-                {application.requesterConfirmed
-                  ? "Confirmed"
-                  : "Pending"}
-              </span>
-            </p>
-          </div>
+              <p>
+                Requester confirmation:{" "}
+                <span className="font-medium">
+                  {application.requesterConfirmed
+                    ? "Confirmed"
+                    : "Pending"}
+                </span>
+              </p>
+            </div>
+
+            {/* Chat */}
+
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleOpenChat}
+            >
+              Chat
+            </Button>
+          </>
         )}
 
         {/* Pending Application */}
@@ -227,7 +285,9 @@ export default function ApplicationCard({
             <ReviewForm
               requestId={requestId}
               applicationId={application._id}
-              revieweeName={application.helper.name}
+              revieweeName={
+                application.helper.name
+              }
               onSuccess={() =>
                 window.location.reload()
               }
