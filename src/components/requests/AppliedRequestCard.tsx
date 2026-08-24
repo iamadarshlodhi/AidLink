@@ -1,21 +1,19 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
 import { Button } from "@/components/ui/button";
 import WithdrawButton from "./WithdrawButton";
 import ReviewForm from "@/components/reviews/ReviewForm";
-
 import type { AppliedRequest } from "@/types/request-application";
 
 interface AppliedRequestCardProps {
@@ -73,21 +71,26 @@ export default function AppliedRequestCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>
-          {request.title}
-        </CardTitle>
+        <div className="flex items-start justify-between gap-4">
+          <CardTitle>{request.title}</CardTitle>
+
+          <Button asChild variant="outline" size="sm">
+            <Link
+              href={`/help-request/${request._id}`}
+            >
+              View Request
+            </Link>
+          </Button>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-5">
-
         {/* Request Info */}
-
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
             <p className="text-sm text-muted-foreground">
               Category
             </p>
-
             <p className="font-medium capitalize">
               {request.category}
             </p>
@@ -97,7 +100,6 @@ export default function AppliedRequestCard({
             <p className="text-sm text-muted-foreground">
               Task Type
             </p>
-
             <p className="font-medium capitalize">
               {request.taskType}
             </p>
@@ -107,7 +109,6 @@ export default function AppliedRequestCard({
             <p className="text-sm text-muted-foreground">
               Mode
             </p>
-
             <p className="font-medium capitalize">
               {request.mode}
             </p>
@@ -117,7 +118,6 @@ export default function AppliedRequestCard({
             <p className="text-sm text-muted-foreground">
               Deadline
             </p>
-
             <p className="font-medium">
               {new Date(
                 request.deadline
@@ -127,37 +127,45 @@ export default function AppliedRequestCard({
         </div>
 
         {/* Requester */}
-
         <div className="flex items-center gap-3">
-          <Image
-            src={
-              request.requester.profilePicture ||
-              "/default-avatar.png"
-            }
-            alt={request.requester.name}
-            width={44}
-            height={44}
-            className="h-11 w-11 rounded-full object-cover"
-          />
+          <Link
+            href={`/user/${request.requester.username}`}
+            className="shrink-0"
+          >
+            <Image
+              src={
+                request.requester.profilePicture ||
+                "/default-avatar.png"
+              }
+              alt={request.requester.name}
+              width={44}
+              height={44}
+              className="h-11 w-11 rounded-full object-cover"
+            />
+          </Link>
 
           <div>
-            <p className="font-medium">
+            <Link
+              href={`/user/${request.requester.username}`}
+              className="font-medium hover:underline"
+            >
               {request.requester.name}
-            </p>
+            </Link>
 
-            <p className="text-sm text-muted-foreground">
+            <Link
+              href={`/user/${request.requester.username}`}
+              className="block text-sm text-muted-foreground hover:underline"
+            >
               @{request.requester.username}
-            </p>
+            </Link>
           </div>
         </div>
 
         {/* Application */}
-
         <div>
           <p className="text-sm text-muted-foreground">
             Your message
           </p>
-
           <p className="mt-1 text-sm">
             {application.message ||
               "No message provided."}
@@ -165,7 +173,6 @@ export default function AppliedRequestCard({
         </div>
 
         {/* Status */}
-
         <div className="flex flex-wrap items-center justify-between gap-3">
           <span className="text-sm">
             Application status:{" "}
@@ -183,7 +190,6 @@ export default function AppliedRequestCard({
         </div>
 
         {/* Completion Status */}
-
         {application.status === "accepted" && (
           <div className="space-y-1 rounded-md border p-3 text-sm">
             <p>
@@ -207,7 +213,6 @@ export default function AppliedRequestCard({
         )}
 
         {/* Withdraw */}
-
         {(application.status === "pending" ||
           application.status === "accepted") && (
           <WithdrawButton
@@ -216,7 +221,6 @@ export default function AppliedRequestCard({
         )}
 
         {/* Mark Completed */}
-
         {application.status === "accepted" &&
           !helperConfirmed && (
             <Button
@@ -231,7 +235,6 @@ export default function AppliedRequestCard({
           )}
 
         {/* Waiting for Requester */}
-
         {application.status === "accepted" &&
           helperConfirmed &&
           !requesterConfirmed && (
@@ -242,14 +245,11 @@ export default function AppliedRequestCard({
           )}
 
         {/* Completed */}
-
         {isCompleted && (
           <>
             <div className="rounded-md border p-3 text-center text-sm font-medium">
               Task completed successfully.
             </div>
-
-            {/* Review Requester */}
 
             <ReviewForm
               requestId={request._id}

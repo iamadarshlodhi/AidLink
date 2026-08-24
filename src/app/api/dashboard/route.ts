@@ -4,7 +4,6 @@ import dbConnect from "@/lib/dbConnect";
 import { getDashboardStats } from "@/lib/dashboard/getDashboardStats";
 import { getMyRequests } from "@/lib/dashboard/getMyRequests";
 import { getAvailableRequests } from "@/lib/dashboard/getAvailableRequests";
-import { getRecentActivity } from "@/lib/dashboard/getRecentActivity";
 
 import { NextResponse } from "next/server";
 
@@ -35,12 +34,10 @@ export async function GET() {
       stats,
       myRequests,
       availableRequests,
-      recentActivity,
     ] = await Promise.all([
       getDashboardStats(userId),
       getMyRequests(userId),
       getAvailableRequests(userId),
-      getRecentActivity(userId),
     ]);
 
     return NextResponse.json(
@@ -51,7 +48,6 @@ export async function GET() {
           stats,
           myRequests,
           availableRequests,
-          recentActivity,
         },
       },
       {

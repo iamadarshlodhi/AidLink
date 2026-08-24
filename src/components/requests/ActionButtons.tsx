@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import Link from "next/link";
 
 import ApplyButton from "./ApplyButton";
 import { Button } from "@/components/ui/button";
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,20 +45,13 @@ export default function ActionButtons({
 
   const [error, setError] = useState("");
 
+  const isOwnerOrAdmin = isOwner || isAdmin;
+  const canModify = status === "open";
+
   /*
    * OWNER / ADMIN
    */
-  if (isOwner || isAdmin) {
-    const canModify = status === "open";
-
-    if (!canModify) {
-      return (
-        <p className="text-sm text-muted-foreground">
-          This request can no longer be edited or deleted.
-        </p>
-      );
-    }
-
+  if (isOwnerOrAdmin) {
     const handleDelete = async () => {
       try {
         setIsDeleting(true);
@@ -68,17 +61,14 @@ export default function ActionButtons({
           `/api/help-request/${requestId}`
         );
 
-        // Remove current request from cache
         queryClient.removeQueries({
           queryKey: ["help-request", requestId],
         });
 
-        // Refresh request lists
         await queryClient.invalidateQueries({
           queryKey: ["help-requests"],
         });
 
-        // Go back to request list
         router.push("/help-request");
         router.refresh();
       } catch (error: any) {
@@ -94,32 +84,52 @@ export default function ActionButtons({
 
     return (
       <>
-        <div className="flex gap-3">
-          {/* Edit */}
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() =>
-              router.push(
-                `/help-request/${requestId}/edit`
-              )
-            }
-          >
-            Edit
+        <div className="flex flex-wrap gap-3">
+          {/* Applications - ALWAYS AVAILABLE */}
+          <Button asChild variant="outline">
+            <Link
+              href={`/help-request/${requestId}/applications`}
+            >
+              Applications
+            </Link>
           </Button>
 
-          {/* Delete */}
-          <Button
-            type="button"
-            variant="destructive"
-            onClick={() =>
-              setDeleteDialogOpen(true)
-            }
-            disabled={isDeleting}
-          >
-            Delete
-          </Button>
+          {/* Edit - ONLY WHEN OPEN */}
+          {canModify && (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() =>
+                router.push(
+                  `/help-request/${requestId}/edit`
+                )
+              }
+            >
+              Edit
+            </Button>
+          )}
+
+          {/* Delete - ONLY WHEN OPEN */}
+          {canModify && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() =>
+                setDeleteDialogOpen(true)
+              }
+              disabled={isDeleting}
+            >
+              Delete
+            </Button>
+          )}
         </div>
+
+        {!canModify && (
+          <p className="mt-2 text-sm text-muted-foreground">
+            This request can no longer be edited or
+            deleted.
+          </p>
+        )}
 
         {error && (
           <p className="mt-2 text-sm text-red-500">
@@ -185,7 +195,5 @@ export default function ActionButtons({
   /*
    * NORMAL USER
    */
-  return (
-    <ApplyButton requestId={requestId} />
-  );
+  return <ApplyButton requestId={requestId} />;
 }

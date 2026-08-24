@@ -28,7 +28,7 @@ export default function MyRequests({
         </div>
 
         <Button variant="outline" asChild>
-          <Link href="/help-request/my">
+          <Link href="/help-request/my-created">
             View All
           </Link>
         </Button>

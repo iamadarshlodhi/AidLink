@@ -20,6 +20,7 @@ import RejectButton from "./RejectButton";
 import ReviewForm from "@/components/reviews/ReviewForm";
 
 import type { RequestApplication } from "@/types/request-application";
+import Link from "next/link";
 
 interface ApplicationCardProps {
   requestId: string;
@@ -127,25 +128,36 @@ export default function ApplicationCard({
         {/* Helper Info */}
 
         <div className="flex items-center gap-4">
-          <Image
-            src={
-              application.helper.profilePicture ||
-              "/default-avatar.png"
-            }
-            alt={application.helper.name}
-            width={56}
-            height={56}
-            className="h-14 w-14 rounded-full object-cover"
-          />
+          <Link
+            href={`/user/${application.helper.username}`}
+            className="shrink-0"
+          >
+            <Image
+              src={
+                application.helper.profilePicture ||
+                "/default-avatar.png"
+              }
+              alt={application.helper.name}
+              width={56}
+              height={56}
+              className="h-14 w-14 rounded-full object-cover"
+            />
+          </Link>
 
           <div className="flex-1">
-            <h3 className="font-semibold">
+            <Link
+              href={`/user/${application.helper.username}`}
+              className="font-semibold hover:underline"
+            >
               {application.helper.name}
-            </h3>
+            </Link>
 
-            <p className="text-sm text-muted-foreground">
+            <Link
+              href={`/user/${application.helper.username}`}
+              className="block text-sm text-muted-foreground hover:underline"
+            >
               @{application.helper.username}
-            </p>
+            </Link>
           </div>
         </div>
 

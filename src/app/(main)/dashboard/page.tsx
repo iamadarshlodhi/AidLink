@@ -9,7 +9,6 @@ import QuickActions from "./components/QuickActions";
 import StatsGrid from "./components/StatsGrid";
 import MyRequests from "./components/MyRequests";
 import AvailableRequests from "./components/AvailableRequests";
-import RecentActivity from "./components/RecentActivity";
 
 import { useDashboard } from "@/hooks/useDashboard";
 
@@ -55,12 +54,8 @@ export default function DashboardPage() {
 
       <StatsGrid stats={data.stats} />
 
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <MyRequests requests={data.myRequests} />
-        </div>
-
-        <RecentActivity activities={data.recentActivity} />
+      <div>
+        <MyRequests requests={data.myRequests} />
       </div>
 
       <AvailableRequests requests={data.availableRequests} />

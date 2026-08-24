@@ -1,6 +1,7 @@
 "use client";
 
 import { LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 interface StatCardProps {
   title: string;
@@ -8,6 +9,7 @@ interface StatCardProps {
   icon: LucideIcon;
   description?: string;
   iconColor?: string;
+  href?: string;
 }
 
 export default function StatCard({
@@ -16,8 +18,9 @@ export default function StatCard({
   icon: Icon,
   description,
   iconColor = "text-primary",
+  href,
 }: StatCardProps) {
-  return (
+  const card = (
     <div className="rounded-2xl border bg-card p-5 shadow-sm transition-all hover:shadow-md">
       <div className="flex items-start justify-between">
         <div className="space-y-1">
@@ -41,5 +44,16 @@ export default function StatCard({
         </div>
       </div>
     </div>
+  );
+
+  return href ? (
+    <Link
+      href={href}
+      className="block transition-transform hover:-translate-y-0.5"
+    >
+      {card}
+    </Link>
+  ) : (
+    card
   );
 }

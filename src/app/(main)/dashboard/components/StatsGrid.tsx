@@ -34,6 +34,7 @@ export default function StatsGrid({
         icon={FileText}
         description="Currently active"
         iconColor="text-blue-500"
+        href="/help-request/my-created"
       />
 
       <StatCard
@@ -42,6 +43,7 @@ export default function StatsGrid({
         icon={ClipboardList}
         description="Applied requests"
         iconColor="text-green-500"
+        href="/help-request/my-applied"
       />
 
       <StatCard
@@ -50,6 +52,7 @@ export default function StatsGrid({
         icon={Bell}
         description="Unread"
         iconColor="text-yellow-500"
+        href="/notifications"
       />
 
       <StatCard
@@ -58,6 +61,7 @@ export default function StatsGrid({
         icon={CheckCircle2}
         description="Tasks completed"
         iconColor="text-emerald-500"
+        href="/reports"
       />
 
       <StatCard
@@ -66,6 +70,7 @@ export default function StatsGrid({
         icon={Star}
         description={`${stats.totalReviews} reviews`}
         iconColor="text-orange-500"
+        href="/profile"
       />
     </div>
   );
