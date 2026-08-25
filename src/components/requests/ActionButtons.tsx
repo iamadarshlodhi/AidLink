@@ -7,7 +7,10 @@ import axios from "axios";
 import Link from "next/link";
 
 import ApplyButton from "./ApplyButton";
+import SOSButton from "@/components/SOSButton";
+
 import { Button } from "@/components/ui/button";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,6 +26,7 @@ interface ActionButtonsProps {
   requestId: string;
   isOwner?: boolean;
   isAdmin?: boolean;
+  isAcceptedHelper?: boolean;
   hasApplied?: boolean;
   status?: string;
 }
@@ -31,6 +35,7 @@ export default function ActionButtons({
   requestId,
   isOwner = false,
   isAdmin = false,
+  isAcceptedHelper = false,
   hasApplied = false,
   status = "open",
 }: ActionButtonsProps) {
@@ -85,7 +90,7 @@ export default function ActionButtons({
     return (
       <>
         <div className="flex flex-wrap gap-3">
-          {/* Applications - ALWAYS AVAILABLE */}
+          {/* Applications */}
           <Button asChild variant="outline">
             <Link
               href={`/help-request/${requestId}/applications`}
@@ -94,7 +99,7 @@ export default function ActionButtons({
             </Link>
           </Button>
 
-          {/* Edit - ONLY WHEN OPEN */}
+          {/* Edit */}
           {canModify && (
             <Button
               type="button"
@@ -109,7 +114,7 @@ export default function ActionButtons({
             </Button>
           )}
 
-          {/* Delete - ONLY WHEN OPEN */}
+          {/* Delete */}
           {canModify && (
             <Button
               type="button"
@@ -121,6 +126,11 @@ export default function ActionButtons({
             >
               Delete
             </Button>
+          )}
+
+          {/* SOS - Owner only */}
+          {(isOwner || isAcceptedHelper) && (
+            <SOSButton requestId={requestId} />
           )}
         </div>
 

@@ -120,4 +120,5 @@ export interface HelpRequestDetail
   isOwner: boolean;
   hasApplied: boolean;
   isAdmin: boolean;
+  isAcceptedHelper: boolean;
 }

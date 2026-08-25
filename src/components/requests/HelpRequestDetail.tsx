@@ -64,6 +64,7 @@ export default function HelpRequestDetail({
         requestId={request._id}
         isOwner={request.isOwner}
         isAdmin={request.isAdmin}
+        isAcceptedHelper={request.isAcceptedHelper}
         hasApplied={request.hasApplied}
         status={request.status}
       />

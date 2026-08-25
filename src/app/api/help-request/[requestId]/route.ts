@@ -77,6 +77,12 @@ export async function GET(
     const isAdmin =
       session.user.role === "admin";
 
+    const isAcceptedHelper =
+      helpRequest.acceptedHelpers?.some(
+        (helper: any) =>
+          helper._id.toString() === session.user.id
+      ) ?? false;
+
     const hasApplied =
       await RequestApplicationModel.exists({
         requestId,
@@ -95,6 +101,7 @@ export async function GET(
           ...helpRequest,
           isOwner,
           isAdmin,
+          isAcceptedHelper,
           hasApplied: !!hasApplied,
         },
       },

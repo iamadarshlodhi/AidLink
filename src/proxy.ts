@@ -10,6 +10,7 @@ export async function proxy(
   const isLoggedIn = !!session;
 
   const isAuthPage =
+    pathname === "/" ||
     pathname.startsWith("/sign-in") ||
     pathname.startsWith("/sign-up") ||
     pathname.startsWith("/forgot-password");
