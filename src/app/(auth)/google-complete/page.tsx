@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { signIn, signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import axios from "axios";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +23,17 @@ export default function GoogleCompletePage() {
     data: session,
     status,
   } = useSession();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      status === "authenticated" &&
+      !session?.user?.googleOnboarding
+    ) {
+      router.replace("/dashboard");
+    }
+  }, [router, session, status]);
 
   const [username, setUsername] =
     useState("");

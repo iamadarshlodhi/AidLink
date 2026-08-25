@@ -1,65 +1,158 @@
-import Image from "next/image";
+"use client";
+
+import Link from "next/link";
+import {
+  HeartHandshake,
+  HandHelping,
+  ShieldCheck,
+  Users,
+} from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-39.5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+    <main className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          <Link href="/" className="flex items-center gap-2">
+            <img
+              src="/logo.svg"
+              alt="AidLink logo"
+              className="h-10 w-10 object-contain"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/8 px-5 transition-colors hover:border-transparent hover:bg-black/4 dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-39.5"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <span className="text-2xl font-bold tracking-tight">
+              AidLink
+            </span>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+
+            <Link
+              href="/sign-in"
+              className="rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:bg-accent"
+            >
+              Sign In
+            </Link>
+
+            <Link
+              href="/sign-up"
+              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              Sign Up
+            </Link>
+          </div>
         </div>
-      </main>
-    </div>
+      </header>
+
+      {/* Hero */}
+      <section className="px-6 py-20 sm:py-28">
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <HeartHandshake className="h-8 w-8 text-primary" />
+          </div>
+
+          <h1 className="text-4xl font-bold tracking-tight sm:text-6xl">
+            Help when you need it.
+            <br />
+            <span className="text-primary">
+              Help when you can give it.
+            </span>
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
+            AidLink connects people who need help with people who
+            are ready to help. Request assistance, offer your skills,
+            and build a stronger community together.
+          </p>
+
+          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+            <Link
+              href="/sign-up"
+              className="rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+            >
+              Get Started
+            </Link>
+
+            <Link
+              href="/sign-in"
+              className="rounded-lg border px-6 py-3 text-sm font-semibold transition-colors hover:bg-accent"
+            >
+              Sign In
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section className="border-t bg-muted/30 px-6 py-16">
+        <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
+          <div className="rounded-2xl border bg-card p-6">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-primary/10">
+              <HandHelping className="h-5 w-5 text-primary" />
+            </div>
+
+            <h2 className="text-lg font-semibold">
+              Request Help
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Post a help request and connect with people who
+              can assist you.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border bg-card p-6">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-primary/10">
+              <Users className="h-5 w-5 text-primary" />
+            </div>
+
+            <h2 className="text-lg font-semibold">
+              Help Others
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Discover requests and use your time, skills, or
+              resources to make a difference.
+            </p>
+          </div>
+
+          <div className="rounded-2xl border bg-card p-6">
+            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-full bg-primary/10">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+            </div>
+
+            <h2 className="text-lg font-semibold">
+              Build Trust
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+              Profiles, ratings, reviews, and verification help
+              create a trusted community.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Bottom CTA */}
+      <section className="px-6 py-16 text-center">
+        <h2 className="text-2xl font-bold">
+          Ready to make a difference?
+        </h2>
+
+        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">
+          Join AidLink and start connecting with people who
+          need help or are ready to provide it.
+        </p>
+
+        <Link
+          href="/sign-up"
+          className="mt-6 inline-flex rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+        >
+          Join AidLink
+        </Link>
+      </section>
+    </main>
   );
 }

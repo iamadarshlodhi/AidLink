@@ -230,7 +230,7 @@ export const {
          * Redirect to the page where we
          * collect username + phone.
          */
-        return "/google-complete";
+        return true;
       }
 
       return false;
@@ -504,5 +504,7 @@ export const {
    * ==========================================
    */
   secret:
+    process.env.AUTH_SECRET ??
+    process.env.NEXTAUTH_SECRET ??
     process.env.BETTER_AUTH_SECRET,
 });

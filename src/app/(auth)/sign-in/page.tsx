@@ -202,7 +202,7 @@ export default function SignInPage() {
               className="w-full"
               onClick={() =>
                 signIn("google", {
-                  callbackUrl: "/",
+                  callbackUrl: "/google-complete",
                 })
               }
             >
